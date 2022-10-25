@@ -475,563 +475,777 @@
         \underline{\textbf{Idee / Wunsch:}} Gebe einen Algorithmus an, der das lineare Ausgleichsproblem löst und nur 
         auf $A$ arbeitet.
 
-    \section{Methode der Orthogonalisierung}
+        \section{Methode der Orthogonalisierung}
 
-        \begin{definition}\label{d2.8}
-            Eine Matrix $Q\in\R^{n\times n}$ heißt \textbf{orthogonal}, wenn $Q^tQ=I$, d.h. falls die Spalten von $Q$ eine ONB bzgl. des 
-            euklidischen Skalarprodukts bilden. Schreibe $Q\in O(n)$.
-        \end{definition}
+            \begin{definition}\label{d2.8}
+                Eine Matrix $Q\in\R^{n\times n}$ heißt \textbf{orthogonal}, wenn $Q^tQ=I$, d.h. falls die Spalten von $Q$ eine ONB bzgl. des 
+                euklidischen Skalarprodukts bilden. Schreibe $Q\in O(n)$.
+            \end{definition}
 
-        \underline{\textbf{Notation:}} $\langle \cdot,\cdot \rangle_2,\Vert \cdot \Vert_2$ für das euklidische Skalarprodukt / die euklidische Norm.
+            \underline{\textbf{Notation:}} $\langle \cdot,\cdot \rangle_2,\Vert \cdot \Vert_2$ für das euklidische Skalarprodukt / die euklidische Norm.
 
-        \begin{lemma}\label{l2.9}
-            Für alle $Q\in O(n)$ gilt
-            \begin{enumerate}
-                \item $\Vert Qx \Vert_2=\Vert x \Vert_2$ (Invarianz der Norm bzgl. orthogonaler Projektionen)
-                \item $\cond_2(Q)=1$
-            \end{enumerate}
-        \end{lemma}
+            \begin{lemma}\label{l2.9}
+                Für alle $Q\in O(n)$ gilt
+                \begin{enumerate}
+                    \item $\Vert Qx \Vert_2=\Vert x \Vert_2$ (Invarianz der Norm bzgl. orthogonaler Projektionen)
+                    \item $\cond_2(Q)=1$
+                \end{enumerate}
+            \end{lemma}
 
-        \begin{proof}
-            1.: $\Vert Qx \Vert_2^2=\langle Qx,Qx \rangle_2=\langle Q^tQx,x \rangle_2=\langle x,x \rangle_2=\Vert x \Vert_2^2$
+            \begin{proof}
+                1.: $\Vert Qx \Vert_2^2=\langle Qx,Qx \rangle_2=\langle Q^tQx,x \rangle_2=\langle x,x \rangle_2=\Vert x \Vert_2^2$
 
-            2.: $\Vert Q \Vert_2=\max_{\Vert x \Vert_2=1}\Vert Qx \Vert=1$ und auch $\Vert Q^-1 \Vert_2=1\implies$ Behauptung.
-        \end{proof}
+                2.: $\Vert Q \Vert_2=\max_{\Vert x \Vert_2=1}\Vert Qx \Vert=1$ und auch $\Vert Q^-1 \Vert_2=1\implies$ Behauptung.
+            \end{proof}
 
-        \begin{theorem}\label{s2.10}
-            $A\in\R^{m\times n},m\geq n,\rang(A)=n$. Dann hat $A$ eine QR-Zerlegung:
-            \begin{equation*}
-                A=Q\begin{pmatrix*}
-                    R\\
-                    0
-                \end{pmatrix*}
-            \end{equation*}
-            wobei $Q\in O(m),R\in\R^{n\times n}$ eine obere Dreiecksmatrix ist.
-        \end{theorem}
+            \begin{theorem}\label{s2.10}
+                $A\in\R^{m\times n},m\geq n,\rang(A)=n$. Dann hat $A$ eine QR-Zerlegung:
+                \begin{equation*}
+                    A=Q\begin{pmatrix*}
+                        R\\
+                        0
+                    \end{pmatrix*}
+                \end{equation*}
+                wobei $Q\in O(m),R\in\R^{n\times n}$ eine obere Dreiecksmatrix ist.
+            \end{theorem}
 
-        \begin{proof}
-            Schreibe das Gram-Schmidt-Orthogonalisierungsverfahren in Matrixform:
-            \[
-            Q=\underbrace{\begin{bmatrix}
-                &&&\\
-                &&&\\
-                &&&\\
-                A_n & \dots & A_2 & A_1\\
-                &&&\\
-                &&&\\
-                &&&
-            \end{bmatrix}
-            \underbrace{
-            \begin{bmatrix}
-                1 & \dots  & \dots & \dots & \frac{-\langle A_n,A_1 \rangle_2}{\Vert A_1 \Vert_2^2}\\
-                  & \ddots & \dots & \dots & \vdots \\
-                  &        & 1 & \frac{-\langle A_3,A_2 \rangle_2}{\Vert A_2 \Vert_2^2} & \frac{-\langle A_3,A_1 \rangle_2}{\Vert A_1 \Vert_2^2}\\
-                  & \textbf{0} &  & 1 & \frac{-\langle A_2,A_1 \rangle_2}{\Vert A_1 \Vert_2^2} \\
-                  & & &  & 1
-            \end{bmatrix}}_{R'}}_{\begin{bmatrix}
-                B_n & \dots &  B_1
-            \end{bmatrix}} 
-            \underbrace{
-            \begin{bmatrix}
-                \frac{1}{\Vert B_1 \Vert_2} & & 0\\
-                & \ddots& \\
-                0 & &  \frac{1}{\Vert B_n \Vert_2}
-            \end{bmatrix}}_{R''}
-            \]
-
-            $\implies Q\in R^{m\times n},R'R''$ ist obere Dreiecksmatrix mit nicht-null Diagonaleinträgen
-
-            $\implies$ invertierbar: $R=(R'R'')^{-1}$
-            
-            $\implies QR=A$, wenn wir $Q$ zu einer ONB von $R^m$ erweitern.
-        \end{proof}
-       
-        \noindent
-        \xrfill[0.7ex]{1pt}Ende von Vorlesung 02 am 13.10.2022\xrfill[0.7ex]{1pt}
-        
-        \begin{theorem}\label{s2.11}
-            Sei $A\in\R^{m\times n},m\geq n,\rang(A)=n,b\in\R^n$. Sei $A=QR$ eine $QR$-Zerlegung von $A$ und 
-            \[\underbrace{Q^tA}_{=R}=Q^tb=\begin{bmatrix}
-                b_1\\
-                b_2
-            \end{bmatrix}\begin{array}{c}
-                \in \R^n \\
-                \in\R^{m-n}
-            \end{array}.\]
-            Dann ist $x=R_1^-1b_1$ die Lösung des linearen Ausgleichsproblems, wobei $R_1\in\R^{n\times n}$ der obere Teil von $R$ ist.
-        \end{theorem}
-
-        \begin{proof}
-            \begin{align*}
-                \Vert Ax-b \Vert_2^2&\stackrel{\text{Lemma \ref{l2.9}}}{=}\Vert Q^t(Ax-b) \Vert_2^2\\
-                & =\left\Vert \begin{array}{c}
-                    R_1 x-b\\ b_2
-                \end{array} \right\Vert_2^2 = \left\Vert R_1x-b_1 \right\Vert_2^2+ \left\Vert b_2 \right\Vert_2^2\\
-                & \geq \left\Vert b_2 \right\Vert_2^2
-            \end{align*}
-
-            $n=\rang(A)=\rang(R)=\rang(R_1)\implies$ $R_1$ invertierbar $\implies$ Behauptung
-
-        \end{proof}
-
-        \underline{\textbf{Problem:}}
-
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=0.25\textwidth]{Bild004}
-            \caption{Problemstellung}
-        \end{figure}
-
-        $w_2=v_2-\frac{\langle v_2,v_1 \rangle_2}{\langle v_1,v_1 \rangle_2}v_1$ ist problematisch, falls $v_1\approx v_2$ (Auslöschung).
-        Beim Gram-Schmidt-Verfahren können Rundungsfehler auftreten. Es ist instabil.
-
-        \underline{\textbf{Ziel:}} Stabiler Algorithmus um $QR$-Zerlegungen zu berechnen.
-
-    \section{Grundüberlegungen zu Orthogonalisierungsverfahren}
-
-        \underline{\textbf{Problemstellung:}} Gegeben $v_1=\alpha e_1\in\R^2,v_2\in\R^2$ transformiere $v_2$ auf $\tilde{w_2}=\beta e_2$, gebe $\beta$ an.
-
-        \underline{\textbf{Gram-Schmidt:}} $\beta=\left\Vert w \right\Vert_2$
-
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=0.25\textwidth]{Bild005}
-            \caption{Gram-Schmidt}
-        \end{figure}
-
-
-        \underline{\textbf{Drehungen:}} $\tilde{w}_2= Qv_2$
-        \[Q=\begin{bmatrix}
-            \cos(-\theta) & \sin(-\theta) \\
-            -\sin(-\theta) & \cos(-\theta)
-        \end{bmatrix}\]
-        \[\beta = \left\Vert v_2 \right\Vert_2\]
-
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=0.25\textwidth]{Bild006}
-            \caption{Drehungsansatz}
-        \end{figure}
-
-
-        \underline{\textbf{Spiegelungen:}} $\tilde{w}_2=Qv_2$, $Q=I-2\frac{vv^t}{v^tv}$ und $\beta=\left\Vert v_2 \right\Vert_2$
-
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=0.25\textwidth]{Bild007}
-            \caption{Spiegelungsansatz}
-        \end{figure}
-
-
-        \underline{\textbf{Idee:}} Benutze orthogonale Transformationen $Q_1,\dots,Q_n$ um $A\in\R^{m\times n}$ 
-        ,$\rang(A)=n$, sukzessive zu reduzieren.
-        \[A\rightsquigarrow Q_1A\rightsquigarrow Q_2Q_1 A\rightsquigarrow\dots\rightsquigarrow \begin{bmatrix}
-            &R_1\\
-            0 &\\
-            \\
-            & 0 &
-        \end{bmatrix}\]
-
-        Weil $\cond_2(Q)=1$ ist die Vorgehensweise stabil, bzw. gut konditioniert.
-
-        \underline{\textbf{Aber:}} Wie wählen wir $Q_1,\dots,Q_n$?
-
-    \section{$QR$-Zerlegung mittels Givens-Rotationen}
-
-        \begin{definition}\label{d2.12}
-            Eine Matrix der Form
-            
-            \[
-                \delta_{k,l}=\begin{bmatrix}
-                    1 & & & & & & & & \\
-                    & \ddots & & & & & & & \\
-                    & & c & &  & s & & & \\
-                    & & & 1 &  & & & & \\
-                    & & & &  \ddots  & & & & \\
-                    & & -s & & & c & & & \\
-                    & &  & & & & 1 & & \\
-                    & &  & & & & & \ddots & \\
-                    & &  & & & & &  & 1\\
+            \begin{proof}
+                Schreibe das Gram-Schmidt-Orthogonalisierungsverfahren in Matrixform:
+                \[
+                Q=\underbrace{\begin{bmatrix}
+                    &&&\\
+                    &&&\\
+                    &&&\\
+                    A_n & \dots & A_2 & A_1\\
+                    &&&\\
+                    &&&\\
+                    &&&
                 \end{bmatrix}
-            \]
-            , wobei die $s,c$ Einträge in der $k,l$ten Zeile / Spalte sind, heißen Givens-Rotationen.
-        \end{definition}
+                \underbrace{
+                \begin{bmatrix}
+                    1 & \dots  & \dots & \dots & \frac{-\langle A_n,A_1 \rangle_2}{\Vert A_1 \Vert_2^2}\\
+                    & \ddots & \dots & \dots & \vdots \\
+                    &        & 1 & \frac{-\langle A_3,A_2 \rangle_2}{\Vert A_2 \Vert_2^2} & \frac{-\langle A_3,A_1 \rangle_2}{\Vert A_1 \Vert_2^2}\\
+                    & \textbf{0} &  & 1 & \frac{-\langle A_2,A_1 \rangle_2}{\Vert A_1 \Vert_2^2} \\
+                    & & &  & 1
+                \end{bmatrix}}_{R'}}_{\begin{bmatrix}
+                    B_n & \dots &  B_1
+                \end{bmatrix}} 
+                \underbrace{
+                \begin{bmatrix}
+                    \frac{1}{\Vert B_1 \Vert_2} & & 0\\
+                    & \ddots& \\
+                    0 & &  \frac{1}{\Vert B_n \Vert_2}
+                \end{bmatrix}}_{R''}
+                \]
 
-        \underline{\textbf{Bemerke:}} Für $c=\cos(\theta),s=\sin(\theta)$ ist $\delta_{k,l}$ eine Drehung um $\theta$ in 
-        in der Koordinaten $(k,l)$. $\delta_{k,l}$ ist Orthogonal.
+                $\implies Q\in R^{m\times n},R'R''$ ist obere Dreiecksmatrix mit nicht-null Diagonaleinträgen
 
-        \underline{\textbf{Frage:}} Wie wählen wir $c,s$? 
+                $\implies$ invertierbar: $R=(R'R'')^{-1}$
+                
+                $\implies QR=A$, wenn wir $Q$ zu einer ONB von $R^m$ erweitern.
+            \end{proof}
         
-        Gegeben $x\in\R^n$, elemeniere $l$te Koordinate zu $0$.
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 02 am 13.10.2022\xrfill[0.7ex]{1pt}
+            
+            \begin{theorem}\label{s2.11}
+                Sei $A\in\R^{m\times n},m\geq n,\rang(A)=n,b\in\R^n$. Sei $A=QR$ eine $QR$-Zerlegung von $A$ und 
+                \[\underbrace{Q^tA}_{=R}=Q^tb=\begin{bmatrix}
+                    b_1\\
+                    b_2
+                \end{bmatrix}\begin{array}{c}
+                    \in \R^n \\
+                    \in\R^{m-n}
+                \end{array}.\]
+                Dann ist $x=R_1^-1b_1$ die Lösung des linearen Ausgleichsproblems, wobei $R_1\in\R^{n\times n}$ der obere Teil von $R$ ist.
+            \end{theorem}
 
-        \[\begin{bmatrix}
-            c & s\\ -s & c
-        \end{bmatrix}=\begin{bmatrix}
-            x_k\\ x_l
-        \end{bmatrix}=\begin{bmatrix}
-            r\\0
-        \end{bmatrix}\]
+            \begin{proof}
+                \begin{align*}
+                    \Vert Ax-b \Vert_2^2&\stackrel{\text{Lemma \ref{l2.9}}}{=}\Vert Q^t(Ax-b) \Vert_2^2\\
+                    & =\left\Vert \begin{array}{c}
+                        R_1 x-b\\ b_2
+                    \end{array} \right\Vert_2^2 = \left\Vert R_1x-b_1 \right\Vert_2^2+ \left\Vert b_2 \right\Vert_2^2\\
+                    & \geq \left\Vert b_2 \right\Vert_2^2
+                \end{align*}
 
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=0.25\textwidth]{Bild008}
-            \caption{Trigonometriesetting}
-        \end{figure}
+                $n=\rang(A)=\rang(R)=\rang(R_1)\implies$ $R_1$ invertierbar $\implies$ Behauptung
 
-        \begin{equation*}
-            r^2=x_k^2+x_l^2
-            \implies \pm \sqrt{x_k^2+x_l^2}
-        \end{equation*}
+            \end{proof}
 
-        \underline{\textbf{Aber:}} Diese Berechnungsweise ist nicht unbedingt stabil ($x_k\gg x_l$)
+            \underline{\textbf{Problem:}}
 
-        Stabile Variante:
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.25\textwidth]{Bild004}
+                \caption{Problemstellung}
+            \end{figure}
+
+            $w_2=v_2-\frac{\langle v_2,v_1 \rangle_2}{\langle v_1,v_1 \rangle_2}v_1$ ist problematisch, falls $v_1\approx v_2$ (Auslöschung).
+            Beim Gram-Schmidt-Verfahren können Rundungsfehler auftreten. Es ist instabil.
+
+            \underline{\textbf{Ziel:}} Stabiler Algorithmus um $QR$-Zerlegungen zu berechnen.
+
+        \section{Grundüberlegungen zu Orthogonalisierungsverfahren}
+
+            \underline{\textbf{Problemstellung:}} Gegeben $v_1=\alpha e_1\in\R^2,v_2\in\R^2$ transformiere $v_2$ auf $\tilde{w_2}=\beta e_2$, gebe $\beta$ an.
+
+            \underline{\textbf{Gram-Schmidt:}} $\beta=\left\Vert w \right\Vert_2$
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.25\textwidth]{Bild005}
+                \caption{Gram-Schmidt}
+            \end{figure}
 
 
-        \begin{equation}\label{e2.3}
-            \begin{array}{c}
-                \text{Falls }\left\vert x_l \right\vert>\left\vert x_k \right\vert\implies \tau =\frac{x_k}{x_l},s=\frac{1}{\sqrt{1+\tau^2}},c=s\tau\\
-                \text{Sonst: }\tau=\frac{x_l}{x_k},c=\frac{1}{\sqrt{1+\tau^2}},s=c\tau
-            \end{array}
-        \end{equation}
-       
+            \underline{\textbf{Drehungen:}} $\tilde{w}_2= Qv_2$
+            \[Q=\begin{bmatrix}
+                \cos(-\theta) & \sin(-\theta) \\
+                -\sin(-\theta) & \cos(-\theta)
+            \end{bmatrix}\]
+            \[\beta = \left\Vert v_2 \right\Vert_2\]
 
-        Beispielprozess:
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.25\textwidth]{Bild006}
+                \caption{Drehungsansatz}
+            \end{figure}
 
-        \[
-        \begin{bmatrix}
-            * & * & * \\
-            * & * & * \\
-            \color{red}* & * & * \\
-            \color{red}* & * & * \\
-        \end{bmatrix}
-        \rightsquigarrow
-        \begin{bmatrix}
-            * & * & * \\
-            \color{red}* & * & * \\
-            \color{red}* & * & * \\
-            0 & * & * \\
-        \end{bmatrix}
-        \rightsquigarrow
-        \begin{bmatrix}
-            \color{red}* & * & * \\
-            \color{red}* & * & * \\
-            0 & * & * \\
-            0 & * & * \\
-        \end{bmatrix}
-        \rightsquigarrow
-        \begin{bmatrix}
-            * & * & * \\
-            0 & * & * \\
-            0 & 0 & * \\
-            0 & 0 & 0 \\
-        \end{bmatrix}
-        \]
 
-        \begin{algorithm}[H]\label{a2.13}
-            \caption{}
-            \textbf{Input:} $A\in\R^{m\times n},m\geq n$\\
-            \textbf{Output:} $R$ von der $QR$-Zerlegung ($A$ wird zerstört ``in place'')
-            \begin{algorithmic}
-            \For{$j=1,\dots, n$}
-                \For{$i=m,m-1,\dots, j+1$}
-                    \State Berechne $c,s$ wie in (\ref{e2.3})
-                    \State $A[i-1:i,j:n]=\begin{bmatrix}
-                        c & s \\
-                        -s & c 
-                    \end{bmatrix}^t A[i-1:i,j:n]$
-                \EndFor
-            \EndFor
-            \end{algorithmic}
-        \end{algorithm}
+            \underline{\textbf{Spiegelungen:}} $\tilde{w}_2=Qv_2$, $Q=I-2\frac{vv^t}{v^tv}$ und $\beta=\left\Vert v_2 \right\Vert_2$
 
-        \underline{\textbf{$m\approx n$:}}
-    
-        $c,s$: In jedem Eintrag einmal Wurzeln ziehen: $\implies \frac{n^2}{2}$ Quadratwurzeln und $\frac{4n^3}{3}$ Multiplikationen
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.25\textwidth]{Bild007}
+                \caption{Spiegelungsansatz}
+            \end{figure}
 
-        \underline{\textbf{$m\gg n$:}} $m\cdot n$ Quadratwurzeln und $2m\cdot n^2$ Multiplikationen
 
-        \begin{remark}\label{r2.14}
-            Der Algorithmus \ref{a2.13} berechnet nur $R$ von der $QR$-Zerlegung. Zur Berechnung von $Q$ müssten 
-            zusätliche Operationen investiert werden um die Givens-Rotation auf $I$ anzuwenden.
+            \underline{\textbf{Idee:}} Benutze orthogonale Transformationen $Q_1,\dots,Q_n$ um $A\in\R^{m\times n}$ 
+            ,$\rang(A)=n$, sukzessive zu reduzieren.
+            \[A\rightsquigarrow Q_1A\rightsquigarrow Q_2Q_1 A\rightsquigarrow\dots\rightsquigarrow \begin{bmatrix}
+                &R_1\\
+                0 &\\
+                \\
+                & 0 &
+            \end{bmatrix}\]
 
-            Für das lineare Ausgleichsproblem benötigen wir $Q^tb$, weshalb wir den Algorithmus auf $\left[\begin{array}{c|c}
-                A & b
-            \end{array}\right]$ anwenden können (da $R=Q^t A$).
-        \end{remark}
+            Weil $\cond_2(Q)=1$ ist die Vorgehensweise stabil, bzw. gut konditioniert.
 
-        \begin{remark}\label{b2.15}
-            Für $m=n$ ist die $QR$-Zerlegung eine (teure) ALternative zur $LR$-Zerlegung.
-        \end{remark}
+            \underline{\textbf{Aber:}} Wie wählen wir $Q_1,\dots,Q_n$?
 
-    \section{$QR$-Zerlegung mittels Householder-Transformationen}
+        \section{$QR$-Zerlegung mittels Givens-Rotationen}
 
-        \begin{definition}\label{d2.16}
-            Für $v\in\R^n,v\neq 0$, heißt \[Q=I-2\frac{\overbrace{vv^t}^{\in\R^{n\times n}}}{\underbrace{v^tv}_{\in\R}}\]
-            Householder-Transformation / Reflexion / Spiegelung.
-        \end{definition}
+            \begin{definition}\label{d2.12}
+                Eine Matrix der Form
+                
+                \[
+                    \delta_{k,l}=\begin{bmatrix}
+                        1 & & & & & & & & \\
+                        & \ddots & & & & & & & \\
+                        & & c & &  & s & & & \\
+                        & & & 1 &  & & & & \\
+                        & & & &  \ddots  & & & & \\
+                        & & -s & & & c & & & \\
+                        & &  & & & & 1 & & \\
+                        & &  & & & & & \ddots & \\
+                        & &  & & & & &  & 1\\
+                    \end{bmatrix}
+                \]
+                , wobei die $s,c$ Einträge in der $k,l$ten Zeile / Spalte sind, heißen Givens-Rotationen.
+            \end{definition}
 
-        \begin{tcolorbox}[enhanced,breakable,
-            title=Wichtig!]
-            Nicht $vv^t$ berechnen, das ist sehr uneffizient!
-        \end{tcolorbox}
+            \underline{\textbf{Bemerke:}} Für $c=\cos(\theta),s=\sin(\theta)$ ist $\delta_{k,l}$ eine Drehung um $\theta$ in 
+            in der Koordinaten $(k,l)$. $\delta_{k,l}$ ist Orthogonal.
 
-        Für $a,v\in\R^n,v\neq 0$ ist $Qa=\left(I-2\frac{vv^t}{v^tv}\right)a =a-2\frac{\langle v,a \rangle_2}{\langle v,v \rangle_2}v$
+            \underline{\textbf{Frage:}} Wie wählen wir $c,s$? 
+            
+            Gegeben $x\in\R^n$, elemeniere $l$te Koordinate zu $0$.
 
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=0.25\textwidth]{Bild009}
-            \caption{Householder-Transformationssetting}
-        \end{figure}
+            \[\begin{bmatrix}
+                c & s\\ -s & c
+            \end{bmatrix}=\begin{bmatrix}
+                x_k\\ x_l
+            \end{bmatrix}=\begin{bmatrix}
+                r\\0
+            \end{bmatrix}\]
 
-        $Qa$ ist $a$ an $l$ gespiegelt.
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.25\textwidth]{Bild008}
+                \caption{Trigonometriesetting}
+            \end{figure}
 
-        \begin{lemma}\label{l2.17}
-            Für eine Householder-Transformation $Q\in\R^{n\times n}$ gilt:
-            \begin{enumerate}
-                \item $Q$ ist symmetrisch
-                \item $Q$ ist orthogonal
-                \item $Q$ ist involutionisch (eine Involution), d.h. $Q^2=I$
-            \end{enumerate}
-        \end{lemma}
-        \begin{proof} % TODO
-            Nachrechnen.
-        \end{proof}
+            \begin{equation*}
+                r^2=x_k^2+x_l^2
+                \implies \pm \sqrt{x_k^2+x_l^2}
+            \end{equation*}
 
-        \underline{\textbf{Frage:}} Gegeben $a\in\R^n$, wie müssen wir $v$ wählen, so dass $Qa=\alpha e_1$ für $\alpha\in\R$?
+            \underline{\textbf{Aber:}} Diese Berechnungsweise ist nicht unbedingt stabil ($x_k\gg x_l$)
 
-        % TODO? Kommentar Skalarprodukt etc. schnell auf PCs
+            Stabile Variante:
 
-        \underline{\textbf{Beobachte:}}
 
-        \begin{enumerate}
-            \item $\left\vert \alpha \right\vert=\left\Vert \alpha e_1 \right\Vert_2 = \left\Vert Qa \right\Vert_2 = \left\Vert a \right\Vert_2$
-            \item $a\underbrace{-2\frac{\langle v,a, \rangle}{\langle v,v \rangle}}_{\in\R}v=Qa$
-        
-            $\implies v\in\text{span}(\alpha e_1-a) \implies \alpha =\pm\left\Vert a \right\Vert_2$ % ??
-
-            Vermeide Auslöschung $\implies \alpha=-\text{sign}(a_1)\cdot\left\Vert a \right\Vert_2$
-        \end{enumerate}
-
-        \underline{\textbf{Effiziente Berechnung:}} Beobachte:
-        \begin{align*}
-            \left\Vert v \right\Vert_2^2 = \langle v,v \rangle_2 &= \langle  a-\alpha e_1, a-\alpha e_1  \rangle_2&\\
-            &=\left\Vert a \right\Vert_2^2-2\alpha a_1 +\alpha^2&\\
-            &=-2\alpha(a_1-\alpha)&\\
-            \implies Qa &= a-2\frac{\langle v,a \rangle_2}{\left\Vert v \right\Vert_2^2}=a+\frac{\langle v,a \rangle_2}{\alpha(a_1-\alpha)}v&
-        \end{align*}
-
-        \noindent
-        \xrfill[0.7ex]{1pt}Ende von Vorlesung 03 am 18.10.2022\xrfill[0.7ex]{1pt}
-        
-        \begin{lemma}\label{l2.18}
-            Sie $\alpha\in\R^n,a\neq 0,a\notin\text{span}\{e_1\}$. 
-            Sei \begin{equation}\label{g2.4}
-                v=a-\alpha e_1,\alpha =-\text{sign}(a_1)\cdot \left\Vert a \right\Vert_2
-            \end{equation} % oder alpha e_1-a
-            Dann ist
-            \begin{equation}\label{g2.5}
-                \left(I-2\frac{vv^t}{v^tv}\right)a=a+\frac{v^ta}{\alpha(a_1-\alpha)}v=\alpha e_1.
+            \begin{equation}\label{e2.3}
+                \begin{array}{c}
+                    \text{Falls }\left\vert x_l \right\vert>\left\vert x_k \right\vert\implies \tau =\frac{x_k}{x_l},s=\frac{1}{\sqrt{1+\tau^2}},c=s\tau\\
+                    \text{Sonst: }\tau=\frac{x_l}{x_k},c=\frac{1}{\sqrt{1+\tau^2}},s=c\tau
+                \end{array}
             \end{equation}
-        \end{lemma}
-
-        \begin{proof}
-            Siehe oben.
-        \end{proof}
-
-        \begin{algorithm}[H]\label{a2.19}
-            \caption{}
-            \textbf{Input:} $A\in\R^{m\times n},m\geq n$ ``Mehr Zeilen als Spalten''\\
-            \textbf{Output:} $A\in\R^{m\times n}$, obere rechte Dreiecksmatrix $R$, Rest Householder-Transformationen
-            \begin{algorithmic}
-            \For{$j=1,\dots, n$} \Comment Iterieren über die Spalten
-                \State Berechne $v,\alpha$ wie in (\ref{g2.4}) ,mit $a=A[j:m,j]\in\R^{m-j+1}$
-                \State $v=\frac{1}{v_1}v$ \Comment Erster Eintrag wird nicht gespeichert, daher normalisieren wir
-                \State Berechne $A[j:m,j:n]=\left(I-\frac{vv^t}{v^tv}\right)A[j:m,j:n]$ wie in (\ref{g2.5})
-                \If{$j<m$}
-                    \State A[j+1:m,j]=v[2:m-j+1]\Comment Index startet von 1 
-                \EndIf
-            \EndFor
-            \end{algorithmic}
-        \end{algorithm}
-
-        \begin{remark}\label{b2.20}
-            Die Skalierung $v=\frac{1}{v_1}v$ stellt sicher, dass die der erste Eintrag von $v$ nicht gespeichert werden muss.
-        \end{remark}
-
-        \underline{\textbf{Aufwand:}} $m\sim n \rightsquigarrow \frac{2}{3}n^3$ Multiplikationen
-
-        $m\gg n \rightsquigarrow 2n^2m$ Multiplikationen
-
-        Schneller als Givensrotationen, stabiler als Normalengleichungen
-
-    \section{Pseudoinverse}
-
-        \underline{\textbf{Ausgangspunkt:}} Wir wollen ein stabiles numerisches Verfahren, dass 
-        \[
-            Ax=b,A\in\R^{m\times n},m\geq n,\rang(A)=n,b\in\R^n    
-        \]
-        ``lösen'' kann, d.h. es gilt 
-        \[
-            \left\Vert Ax-b \right\Vert_2=\min_{y\in\R^n}\left\Vert Ay-b \right\Vert_2    
-        \]
-
-        Mathematisch können wir die Abbildung $b\mapsto x$, wegen der Normalengleichung (\ref{g2.2}), schreiben als 
-        \[
-            x=\underbrace{(A^tA)^{-1}A^t}_{\coloneqq A^\dagger}b=A^\dagger b    
-        \]
-        $A^\dagger\in\R^{n\times m}$. Wegen $A^\dagger A=I$ heißt $A^\dagger$ auch \textbf{Pseudoinverse}.
-
-        \underline{\textbf{Frage:}} Können wir den Begriff der Inversen noch weiter verallgemeinern? Auf beliebige Matrizen?
-
-        Satz \ref{s1.9}: $A\in\R^{m\times n}, U=\text{Bild}(A)$
-
-        \begin{align*}
-            &\implies \left\Vert Ax-b \right\Vert_2=\min_{y\in\R^n} \left\Vert Ay-b \right\Vert_2 \stackrel{\text{Satz \ref{s1.9}}}{\iff} Ax-b\in\text{Bild}(A)^\perp\\
-            &\iff Ax- Pb -\underbrace{(b-Pb)}_{\in U^\perp:\text{ Satz \ref{s1.9}}}\in\text{Bild}(A)^\perp, Pb \text{ ist die orthogonale Projektion von } b \text{ auf } U\\
-            &\iff \underbrace{\underbrace{Ax}_{\in U}-\underbrace{Pb}_{\in U}}_{\in U}\in\text{ Bild}(A)^\perp\\
-            & \iff Ax=Pb
-        \end{align*}
-
-        Falls $\rang(A)<n$ (z.B., falls $m<n$) ist $Ax=Pb$ nicht eindeutig lösbar (aber es existiert immer eine Lösung).
-
-        Für $\tilde{x}\in\R^n$ mit $A\tilde{x}=Pb,x'\in\text{ker}(A)$ ist $A(\tilde{x}+x')=Pb$.
-
-        \begin{align*}
-            L(b)&=\left\{x\in\R^n:\left\Vert Ax-b \right\Vert_2 = \min_{y\in\R^n} \left\Vert Ay-b \right\Vert_2\right\}\\
-            &=\{x\in\R^n:Ax=Pb\}\\
-            &=\tilde{x}+\ker(A)
-        \end{align*}
-
-        Sind gewisse Lösungen sinnvoller als andere?
-
-        Wähle: $x\in\tilde{x}+\ker(A)$ mit minimaler Norm als ``eindeutige'' Lösung von $Ax=b$.
-
-        \begin{align*}
-            \stackrel{\text{Bem. \ref{b1.13}}}{\implies} \left\Vert x-0 \right\Vert_2 = \min_{y\in \tilde{x}+ \ker(A)} \left\Vert y-0 \right\Vert_2 &\iff x\in (\tilde{x}+\ker(A))^\perp \\
-            &\iff x\in \ker(A)^\perp % TODO: Überprüfen    
-        \end{align*}
         
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=0.25\textwidth]{Bild010}
-            \caption{Setting}
-        \end{figure}
 
-        \begin{remark}\label{b2.21}
-            Diese Wahl von $x$ für $b\mapsto x$ ist linear: Für $b_1,b_2\in\R^m$ ist:
+            Beispielprozess:
+
             \[
-            \begin{rcases*}
-            Ax_1 = b_1 & $x_1 \in\text{ker}(A)^\perp$ \\
-            Ax_2 = b_2 & $x_2 \in\text{ker}(A)^\perp$
-            \end{rcases*} \implies P(x_1+x_2)=P(x_1)+P(x_2)=Ax_1+Ax_2=A(x_1+x_2),x_1+x_2\in \ker(A)^\perp
-            \]
-        \end{remark}
-
-        \begin{definition}\label{d2.22}
-            Sei $A\in\R^{m\times n}$. Die Abbildungsmatrix $A^\dagger\in\R^{n\times m}$ von $b\mapsto x$ heißt 
-            \textbf{Pseudoinverse} oder \textbf{Moore-Pensore-Inverse} von $A$. D.h. gegeben $b\in\R^n$, dann ist $x=A^\dagger b$ die eindeutige Lösung von 
-            \[
-                \min_{y\in\ker(A)^\perp} \left\Vert Ay-b \right\Vert_2 = \left\Vert Ax-b \right\Vert_2.    
-            \]
-        \end{definition}
-        
-        \begin{theorem}\label{s2.23}
-            $A\in\R^{m\times n}$. Dann ist $A^\dagger\in\R^{m\times n}$ eindeutig über die Moore-Penrose-Axiome definiert:
-            \begin{enumerate}
-                \item $(A^\dagger A)^t=AA^\dagger$
-                \item $(AA^\dagger )^t=A^\dagger A$
-                \item $A^\dagger AA^\dagger = A^\dagger$
-                \item $AA^\dagger A=A$
-            \end{enumerate}
-        \end{theorem}
-
-        \begin{proof}
-            Siehe Literatur oder später
-        \end{proof}
-
-        \underline{\textbf{Frage:}} Wie berechnen wir $x=A^\dagger b$?
-
-        Sei $A\in\R^{m\times n},\rang(A)=p\leq \min(m,n)$. Bringe $A$ mittels orthogonaler Transformationen (z.B. Householder) auf 
-        obere Dreiecksgestalt, d.h.:
-
-        \begin{equation}\label{g2.6}
-            Q^tA=\begin{bmatrix}
-                &  &  & & & \\
-                & R & & S & & \\
-                * & & & & &\\
-                & 0 & &  0 & & \\ 
+            \begin{bmatrix}
+                * & * & * \\
+                * & * & * \\
+                \color{red}* & * & * \\
+                \color{red}* & * & * \\
             \end{bmatrix}
-        \end{equation}
-        wobei  $S\in \R^{p\times (n-p)}$.
-        Setze Analog $x=\begin{bmatrix}
-            x_1\in\R^p\\
-            x_2\in R^{n-p}
-        \end{bmatrix},Q^t b=\begin{bmatrix}
-            b_1\in\R^p\\
-            b_2\in \R^{m-p}
-        \end{bmatrix}$
+            \rightsquigarrow
+            \begin{bmatrix}
+                * & * & * \\
+                \color{red}* & * & * \\
+                \color{red}* & * & * \\
+                0 & * & * \\
+            \end{bmatrix}
+            \rightsquigarrow
+            \begin{bmatrix}
+                \color{red}* & * & * \\
+                \color{red}* & * & * \\
+                0 & * & * \\
+                0 & * & * \\
+            \end{bmatrix}
+            \rightsquigarrow
+            \begin{bmatrix}
+                * & * & * \\
+                0 & * & * \\
+                0 & 0 & * \\
+                0 & 0 & 0 \\
+            \end{bmatrix}
+            \]
 
-        \begin{lemma}\label{l2.24}
-            Mit obigen Bezeichungen ist $x=A^\dagger b$ genau dann, wenn \[x_1=R^{-1}b_1-R^{-1}Sx_2.\]
-        \end{lemma}
-        \begin{proof}
+            \begin{algorithm}[H]\label{a2.13}
+                \caption{}
+                \textbf{Input:} $A\in\R^{m\times n},m\geq n$\\
+                \textbf{Output:} $R$ von der $QR$-Zerlegung ($A$ wird zerstört ``in place'')
+                \begin{algorithmic}
+                \For{$j=1,\dots, n$}
+                    \For{$i=m,m-1,\dots, j+1$}
+                        \State Berechne $c,s$ wie in (\ref{e2.3})
+                        \State $A[i-1:i,j:n]=\begin{bmatrix}
+                            c & s \\
+                            -s & c 
+                        \end{bmatrix}^t A[i-1:i,j:n]$
+                    \EndFor
+                \EndFor
+                \end{algorithmic}
+            \end{algorithm}
+
+            \underline{\textbf{$m\approx n$:}}
+        
+            $c,s$: In jedem Eintrag einmal Wurzeln ziehen: $\implies \frac{n^2}{2}$ Quadratwurzeln und $\frac{4n^3}{3}$ Multiplikationen
+
+            \underline{\textbf{$m\gg n$:}} $m\cdot n$ Quadratwurzeln und $2m\cdot n^2$ Multiplikationen
+
+            \begin{remark}\label{r2.14}
+                Der Algorithmus \ref{a2.13} berechnet nur $R$ von der $QR$-Zerlegung. Zur Berechnung von $Q$ müssten 
+                zusätliche Operationen investiert werden um die Givens-Rotation auf $I$ anzuwenden.
+
+                Für das lineare Ausgleichsproblem benötigen wir $Q^tb$, weshalb wir den Algorithmus auf $\left[\begin{array}{c|c}
+                    A & b
+                \end{array}\right]$ anwenden können (da $R=Q^t A$).
+            \end{remark}
+
+            \begin{remark}\label{b2.15}
+                Für $m=n$ ist die $QR$-Zerlegung eine (teure) ALternative zur $LR$-Zerlegung.
+            \end{remark}
+
+        \section{$QR$-Zerlegung mittels Householder-Transformationen}
+
+            \begin{definition}\label{d2.16}
+                Für $v\in\R^n,v\neq 0$, heißt \[Q=I-2\frac{\overbrace{vv^t}^{\in\R^{n\times n}}}{\underbrace{v^tv}_{\in\R}}\]
+                Householder-Transformation / Reflexion / Spiegelung.
+            \end{definition}
+
+            \begin{tcolorbox}[enhanced,breakable,
+                title=Wichtig!]
+                Nicht $vv^t$ berechnen, das ist sehr uneffizient!
+            \end{tcolorbox}
+
+            Für $a,v\in\R^n,v\neq 0$ ist $Qa=\left(I-2\frac{vv^t}{v^tv}\right)a =a-2\frac{\langle v,a \rangle_2}{\langle v,v \rangle_2}v$
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.25\textwidth]{Bild009}
+                \caption{Householder-Transformationssetting}
+            \end{figure}
+
+            $Qa$ ist $a$ an $l$ gespiegelt.
+
+            \begin{lemma}\label{l2.17}
+                Für eine Householder-Transformation $Q\in\R^{n\times n}$ gilt:
+                \begin{enumerate}
+                    \item $Q$ ist symmetrisch
+                    \item $Q$ ist orthogonal
+                    \item $Q$ ist involutionisch (eine Involution), d.h. $Q^2=I$
+                \end{enumerate}
+            \end{lemma}
+            \begin{proof} % TODO
+                Nachrechnen.
+            \end{proof}
+
+            \underline{\textbf{Frage:}} Gegeben $a\in\R^n$, wie müssen wir $v$ wählen, so dass $Qa=\alpha e_1$ für $\alpha\in\R$?
+
+            % TODO? Kommentar Skalarprodukt etc. schnell auf PCs
+
+            \underline{\textbf{Beobachte:}}
+
+            \begin{enumerate}
+                \item $\left\vert \alpha \right\vert=\left\Vert \alpha e_1 \right\Vert_2 = \left\Vert Qa \right\Vert_2 = \left\Vert a \right\Vert_2$
+                \item $a\underbrace{-2\frac{\langle v,a, \rangle}{\langle v,v \rangle}}_{\in\R}v=Qa$
+            
+                $\implies v\in\text{span}(\alpha e_1-a) \implies \alpha =\pm\left\Vert a \right\Vert_2$ % ??
+
+                Vermeide Auslöschung $\implies \alpha=-\text{sign}(a_1)\cdot\left\Vert a \right\Vert_2$
+            \end{enumerate}
+
+            \underline{\textbf{Effiziente Berechnung:}} Beobachte:
             \begin{align*}
-                \left\Vert Ax-b \right\Vert_2^2&=\left\Vert Q^t(Ax-b) \right\Vert_2^2\\
-                &=\left\Vert \begin{pmatrix}
-                    Rx_1+Sx_2-b\\
-                    -b_2
-                \end{pmatrix} \right\Vert_2^2\\
-                &= \left\Vert Rx_1+Sx_2 -b_1\right\Vert_2^2+\left\Vert b_2 \right\Vert_2^2
+                \left\Vert v \right\Vert_2^2 = \langle v,v \rangle_2 &= \langle  a-\alpha e_1, a-\alpha e_1  \rangle_2&\\
+                &=\left\Vert a \right\Vert_2^2-2\alpha a_1 +\alpha^2&\\
+                &=-2\alpha(a_1-\alpha)&\\
+                \implies Qa &= a-2\frac{\langle v,a \rangle_2}{\left\Vert v \right\Vert_2^2}=a+\frac{\langle v,a \rangle_2}{\alpha(a_1-\alpha)}v&
             \end{align*}
-            ist minimal, falls $Rx_1=b_1-Sx_2$.
-        \end{proof}
 
-        Wir sehen $p=\rang(A)=n\implies$ wie vorher, lineares Ausgleichsproblem!
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 03 am 18.10.2022\xrfill[0.7ex]{1pt}
+            
+            \begin{lemma}\label{l2.18}
+                Sie $\alpha\in\R^n,a\neq 0,a\notin\text{span}\{e_1\}$. 
+                Sei \begin{equation}\label{g2.4}
+                    v=a-\alpha e_1,\alpha =-\text{sign}(a_1)\cdot \left\Vert a \right\Vert_2
+                \end{equation} % oder alpha e_1-a
+                Dann ist
+                \begin{equation}\label{g2.5}
+                    \left(I-2\frac{vv^t}{v^tv}\right)a=a+\frac{v^ta}{\alpha(a_1-\alpha)}v=\alpha e_1.
+                \end{equation}
+            \end{lemma}
 
-        Sonst: $x_2=$?
+            \begin{proof}
+                Siehe oben.
+            \end{proof}
 
-        \begin{lemma}\label{l2.25}
-            Sei $p<n,V=R^-1S\in\R^{n\times (n-p)}$ und $u=R^{-1}b_1\in\R^p$. Dann ist
+            \begin{algorithm}[H]\label{a2.19}
+                \caption{}
+                \textbf{Input:} $A\in\R^{m\times n},m\geq n$ ``Mehr Zeilen als Spalten''\\
+                \textbf{Output:} $A\in\R^{m\times n}$, obere rechte Dreiecksmatrix $R$, Rest Householder-Transformationen
+                \begin{algorithmic}
+                \For{$j=1,\dots, n$} \Comment Iterieren über die Spalten
+                    \State Berechne $v,\alpha$ wie in (\ref{g2.4}) ,mit $a=A[j:m,j]\in\R^{m-j+1}$
+                    \State $v=\frac{1}{v_1}v$ \Comment Erster Eintrag wird nicht gespeichert, daher normalisieren wir
+                    \State Berechne $A[j:m,j:n]=\left(I-\frac{vv^t}{v^tv}\right)A[j:m,j:n]$ wie in (\ref{g2.5})
+                    \If{$j<m$}
+                        \State A[j+1:m,j]=v[2:m-j+1]\Comment Index startet von 1 
+                    \EndIf
+                \EndFor
+                \end{algorithmic}
+            \end{algorithm}
+
+            \begin{remark}\label{b2.20}
+                Die Skalierung $v=\frac{1}{v_1}v$ stellt sicher, dass die der erste Eintrag von $v$ nicht gespeichert werden muss.
+            \end{remark}
+
+            \underline{\textbf{Aufwand:}} $m\sim n \rightsquigarrow \frac{2}{3}n^3$ Multiplikationen
+
+            $m\gg n \rightsquigarrow 2n^2m$ Multiplikationen
+
+            Schneller als Givensrotationen, stabiler als Normalengleichungen
+
+        \section{Pseudoinverse}
+
+            \underline{\textbf{Ausgangspunkt:}} Wir wollen ein stabiles numerisches Verfahren, dass 
+            \[
+                Ax=b,A\in\R^{m\times n},m\geq n,\rang(A)=n,b\in\R^n    
+            \]
+            ``lösen'' kann, d.h. es gilt 
+            \[
+                \left\Vert Ax-b \right\Vert_2=\min_{y\in\R^n}\left\Vert Ay-b \right\Vert_2    
+            \]
+
+            Mathematisch können wir die Abbildung $b\mapsto x$, wegen der Normalengleichung (\ref{g2.2}), schreiben als 
+            \[
+                x=\underbrace{(A^tA)^{-1}A^t}_{\coloneqq A^\dagger}b=A^\dagger b    
+            \]
+            $A^\dagger\in\R^{n\times m}$. Wegen $A^\dagger A=I$ heißt $A^\dagger$ auch \textbf{Pseudoinverse}.
+
+            \underline{\textbf{Frage:}} Können wir den Begriff der Inversen noch weiter verallgemeinern? Auf beliebige Matrizen?
+
+            Satz \ref{s1.9}: $A\in\R^{m\times n}, U=\text{Bild}(A)$
+
             \begin{align*}
-                x&=A^\dagger b\\
-                \iff &(I+V^tV)x_2=V^tu\\
-                &x_1=u-Vx_2
+                &\implies \left\Vert Ax-b \right\Vert_2=\min_{y\in\R^n} \left\Vert Ay-b \right\Vert_2 \stackrel{\text{Satz \ref{s1.9}}}{\iff} Ax-b\in\text{Bild}(A)^\perp\\
+                &\iff Ax- Pb -\underbrace{(b-Pb)}_{\in U^\perp:\text{ Satz \ref{s1.9}}}\in\text{Bild}(A)^\perp, Pb \text{ ist die orthogonale Projektion von } b \text{ auf } U\\
+                &\iff \underbrace{\underbrace{Ax}_{\in U}-\underbrace{Pb}_{\in U}}_{\in U}\in\text{ Bild}(A)^\perp\\
+                & \iff Ax=Pb
             \end{align*}
-        \end{lemma}
 
-        \begin{proof}
+            Falls $\rang(A)<n$ (z.B., falls $m<n$) ist $Ax=Pb$ nicht eindeutig lösbar (aber es existiert immer eine Lösung).
+
+            Für $\tilde{x}\in\R^n$ mit $A\tilde{x}=Pb,x'\in\text{ker}(A)$ ist $A(\tilde{x}+x')=Pb$.
+
             \begin{align*}
-                \left\Vert x \right\Vert_2^2 &= \left\Vert x_1 \right\Vert_2^2 + \left\Vert x_2 \right\Vert_2^2\\
-                &\stackrel{\text{Lemma \ref{l2.24}}}{=}\left\Vert u-Vx_2 \right\Vert_2^2+ \left\Vert x_2 \right\Vert_2^2\\
-                &=\left\Vert u \right\Vert_2^2-2 \langle u,Vx_2 \rangle_2+\langle Vx_2,Vx_2 \rangle_2+\langle x_2,x_2 \rangle_2\\
-                &=\left\Vert u \right\Vert_2^2+\langle x_2,(I+V^tV)x_2-2V^tu \rangle_2 = \varphi(x_2)
+                L(b)&=\left\{x\in\R^n:\left\Vert Ax-b \right\Vert_2 = \min_{y\in\R^n} \left\Vert Ay-b \right\Vert_2\right\}\\
+                &=\{x\in\R^n:Ax=Pb\}\\
+                &=\tilde{x}+\ker(A)
             \end{align*}
-            Minimiere $\varphi(x_2)$:
+
+            Sind gewisse Lösungen sinnvoller als andere?
+
+            Wähle: $x\in\tilde{x}+\ker(A)$ mit minimaler Norm als ``eindeutige'' Lösung von $Ax=b$.
+
             \begin{align*}
-                \varphi'(x_2)=-2V^tu+2(I+V^tV)x_2\\
-                \varphi'(x_2)=2(I+V^tV) \implies \text{spd}
+                \stackrel{\text{Bem. \ref{b1.13}}}{\implies} \left\Vert x-0 \right\Vert_2 = \min_{y\in \tilde{x}+ \ker(A)} \left\Vert y-0 \right\Vert_2 &\iff x\in (\tilde{x}+\ker(A))^\perp \\
+                &\iff x\in \ker(A)^\perp % TODO: Überprüfen    
             \end{align*}
-            $\varphi$ minimal $\iff \varphi'(x_2)=0\implies $ Behauptung.
-        \end{proof}
+            
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.25\textwidth]{Bild010}
+                \caption{Setting}
+            \end{figure}
 
-        \begin{algorithm}[H]\label{a2.26}
-            \caption{}
-            \textbf{Input:} $A\in\R^{m\times n},b\in\R^m$\\
-            \textbf{Output:} $x=A^\dagger b$
-            \begin{algorithmic}
-            \State Berechne $QR$-Zerlegung (\ref{g2.6}) von $A$
-            \State $\begin{bmatrix}b_1\\b_2\end{bmatrix}=Q^t b$
-            \State $V=R^{-1}S$ mittels Rückwertssubstitution 
-            \State $u=R^{-1}b_1$ mittels Rückwertssubstitution
-            \State Löse $(I+V^tV)x_2=V^tu$ mittels Cholesky-Zerlegung 
-            \State $x_1=u-Vx_2$
-            \State $x=\begin{bmatrix}x_1\\x_2\end{bmatrix}$
-            \end{algorithmic}
-        \end{algorithm}
+            \begin{remark}\label{b2.21}
+                Diese Wahl von $x$ für $b\mapsto x$ ist linear: Für $b_1,b_2\in\R^m$ ist:
+                \[
+                \begin{rcases*}
+                Ax_1 = b_1 & $x_1 \in\text{ker}(A)^\perp$ \\
+                Ax_2 = b_2 & $x_2 \in\text{ker}(A)^\perp$
+                \end{rcases*} \implies P(x_1+x_2)=P(x_1)+P(x_2)=Ax_1+Ax_2=A(x_1+x_2),x_1+x_2\in \ker(A)^\perp
+                \]
+            \end{remark}
 
-        \noindent
-        \xrfill[0.7ex]{1pt}Ende von Vorlesung 04 am 20.10.2022\xrfill[0.7ex]{1pt}
+            \begin{definition}\label{d2.22}
+                Sei $A\in\R^{m\times n}$. Die Abbildungsmatrix $A^\dagger\in\R^{n\times m}$ von $b\mapsto x$ heißt 
+                \textbf{Pseudoinverse} oder \textbf{Moore-Pensore-Inverse} von $A$. D.h. gegeben $b\in\R^n$, dann ist $x=A^\dagger b$ die eindeutige Lösung von 
+                \[
+                    \min_{y\in\ker(A)^\perp} \left\Vert Ay-b \right\Vert_2 = \left\Vert Ax-b \right\Vert_2.    
+                \]
+            \end{definition}
+            
+            \begin{theorem}\label{s2.23}
+                $A\in\R^{m\times n}$. Dann ist $A^\dagger\in\R^{m\times n}$ eindeutig über die Moore-Penrose-Axiome definiert:
+                \begin{enumerate}
+                    \item $(A^\dagger A)^t=AA^\dagger$
+                    \item $(AA^\dagger )^t=A^\dagger A$
+                    \item $A^\dagger AA^\dagger = A^\dagger$
+                    \item $AA^\dagger A=A$
+                \end{enumerate}
+            \end{theorem}
+
+            \begin{proof}
+                Siehe Literatur oder später
+            \end{proof}
+
+            \underline{\textbf{Frage:}} Wie berechnen wir $x=A^\dagger b$?
+
+            Sei $A\in\R^{m\times n},\rang(A)=p\leq \min(m,n)$. Bringe $A$ mittels orthogonaler Transformationen (z.B. Householder) auf 
+            obere Dreiecksgestalt, d.h.:
+
+            \begin{equation}\label{g2.6}
+                Q^tA=\begin{bmatrix}
+                    &  &  & & & \\
+                    & R & & S & & \\
+                    * & & & & &\\
+                    & 0 & &  0 & & \\ 
+                \end{bmatrix}
+            \end{equation}
+            wobei  $S\in \R^{p\times (n-p)}$.
+            Setze Analog $x=\begin{bmatrix}
+                x_1\in\R^p\\
+                x_2\in R^{n-p}
+            \end{bmatrix},Q^t b=\begin{bmatrix}
+                b_1\in\R^p\\
+                b_2\in \R^{m-p}
+            \end{bmatrix}$
+
+            \begin{lemma}\label{l2.24}
+                Mit obigen Bezeichungen ist $x=A^\dagger b$ genau dann, wenn \[x_1=R^{-1}b_1-R^{-1}Sx_2.\]
+            \end{lemma}
+            \begin{proof}
+                \begin{align*}
+                    \left\Vert Ax-b \right\Vert_2^2&=\left\Vert Q^t(Ax-b) \right\Vert_2^2\\
+                    &=\left\Vert \begin{pmatrix}
+                        Rx_1+Sx_2-b\\
+                        -b_2
+                    \end{pmatrix} \right\Vert_2^2\\
+                    &= \left\Vert Rx_1+Sx_2 -b_1\right\Vert_2^2+\left\Vert b_2 \right\Vert_2^2
+                \end{align*}
+                ist minimal, falls $Rx_1=b_1-Sx_2$.
+            \end{proof}
+
+            Wir sehen $p=\rang(A)=n\implies$ wie vorher, lineares Ausgleichsproblem!
+
+            Sonst: $x_2=$?
+
+            \begin{lemma}\label{l2.25}
+                Sei $p<n,V=R^-1S\in\R^{n\times (n-p)}$ und $u=R^{-1}b_1\in\R^p$. Dann ist
+                \begin{align*}
+                    x&=A^\dagger b\\
+                    \iff &(I+V^tV)x_2=V^tu\\
+                    &x_1=u-Vx_2
+                \end{align*}
+            \end{lemma}
+
+            \begin{proof}
+                \begin{align*}
+                    \left\Vert x \right\Vert_2^2 &= \left\Vert x_1 \right\Vert_2^2 + \left\Vert x_2 \right\Vert_2^2\\
+                    &\stackrel{\text{Lemma \ref{l2.24}}}{=}\left\Vert u-Vx_2 \right\Vert_2^2+ \left\Vert x_2 \right\Vert_2^2\\
+                    &=\left\Vert u \right\Vert_2^2-2 \langle u,Vx_2 \rangle_2+\langle Vx_2,Vx_2 \rangle_2+\langle x_2,x_2 \rangle_2\\
+                    &=\left\Vert u \right\Vert_2^2+\langle x_2,(I+V^tV)x_2-2V^tu \rangle_2 = \varphi(x_2)
+                \end{align*}
+                Minimiere $\varphi(x_2)$:
+                \begin{align*}
+                    \varphi'(x_2)=-2V^tu+2(I+V^tV)x_2\\
+                    \varphi'(x_2)=2(I+V^tV) \implies \text{spd}
+                \end{align*}
+                $\varphi$ minimal $\iff \varphi'(x_2)=0\implies $ Behauptung.
+            \end{proof}
+
+            \begin{algorithm}[H]\label{a2.26}
+                \caption{}
+                \textbf{Input:} $A\in\R^{m\times n},b\in\R^m$\\
+                \textbf{Output:} $x=A^\dagger b$
+                \begin{algorithmic}
+                \State Berechne $QR$-Zerlegung (\ref{g2.6}) von $A$
+                \State $\begin{bmatrix}b_1\\b_2\end{bmatrix}=Q^t b$
+                \State $V=R^{-1}S$ mittels Rückwertssubstitution 
+                \State $u=R^{-1}b_1$ mittels Rückwertssubstitution
+                \State Löse $(I+V^tV)x_2=V^tu$ mittels Cholesky-Zerlegung 
+                \State $x_1=u-Vx_2$
+                \State $x=\begin{bmatrix}x_1\\x_2\end{bmatrix}$
+                \end{algorithmic}
+            \end{algorithm}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 04 am 20.10.2022\xrfill[0.7ex]{1pt}
+            
+
+    \chapter{Iterative Verfahren für große, dünn besetzte, Gleichungsysteme}
+
+        \section{Motivation}
+
+            Sei $\Omega\subset \R^d,d\in\N$. Betrachte die stationäre Wärmeleitungsgleichung, eine partielle Differenzialgleichung
+            \begin{equation}\label{g3.1}
+                \begin{cases}
+                    -\Delta u(x)=f(x) & \in\Omega\\
+                    u(x)=0 & x\in \delta\Omega
+                \end{cases}
+            \end{equation}
+
+            mit Wärmequelle $f\in C(\Omega)$ und dem Laplace-Operator:
+
+            \begin{equation}\label{g3.2}
+                \Delta u =\sum_{i=1}^n \frac{\partial^2 u(x)}{\partial x_i^2}. 
+            \end{equation}
+
+            Die Lösung $u\in C^2(\Omega)$, falls existent, beschreit die Temperaturverteilung im Raum $\Omega$.
+
+            Diese Gleichung ist i.A. nicht von Hand lösbar! 
+
+            \underline{\textbf{Idee:}} Berechne approximative Lösung im Computer.
+
+            \underline{\textbf{Ansatz:}} Für $g\in C^2(\R)$ ist
+            \begin{align*}
+                g''(x)=\lim_{h\searrow 0} \frac{g'(x+h)-g(x)}{h} &\approx \frac{g'(x+h)-g(x)}{h} \\
+                & \approx \frac{\frac{g(x+h)-g(x)}{h}-\frac{g(x)-g(x-h)}{h}}{h}\\
+                &\approx \frac{g(x+h)-2g(x)+g(x-h)}{h^2}
+            \end{align*}
+
+            $\rightsquigarrow$ Ersetze $\frac{\partial^2 u}{\partial x_i^2}$ in (\ref{g3.2})
+
+            $\rightsquigarrow$ Überziehe $\Omega$ mit einem regelmäßigen Gitter mit Maschenweite $h=\frac{1}{n},n\in\N$.
+
+            % Bild
+
+            Bezeichne die Gitterpunkte mit $x_{ij}$ und $u_{ij}=u(x_{ij})$.
+
+            \[\stackrel{d=2}{\implies}\frac{1}{h^2}\left(4u_{ij}-u_{i+1j}-u_{i-1j}-u_{ij+1}-u_{ij-1}\right)=f_{ij}:i,j\in1,\dots,n-1\] 
+
+            \[u_{ij}=0,i\in\{0,n\}\text{ oder }j\in\{0,n\}\]
+
+            Wir erhalten ein lineares Gleichungssystem mit $N=(n-1)^2$ Unbekannten und $O(1)$ Einträgen pro Zeile. 
+            $\implies A\in\R^{n\times n}$ hat $O(N)$ Einträge. Wir haben das Lösen eines (linearen) partiellen Differentialgleichung durch das Lösen eines linearen 
+            Gleichungssystems ersetzt.
+
+            \begin{example}\label{b3.1}
+                $\Omega=(0,1)^2,n=4\implies h=\frac{1}{4}$. Erhalte:
+
+                \[
+                    \left[
+                        \begin{array}{ccc|ccc|ccc}
+                            4 & -1 & &-1 & & & & & \\
+                            -1 & 4 & -1 & & -1 & & & & \\
+                            & -1 & 4 & & & -1 & & & \\ \cline{1-9}
+                            -1 & & &  4 & -1 & & -1 & & \\
+                            & -1 & &  -1 & 4 & -1 & &-1 &\\
+                            & & -1 & & -1 & 4 & & &  -1\\\cline{1-9}
+                            & & & -1 & & & 4 & -1 & \\
+                            & & & & -1 & & -1 & 4 & -1 \\
+                            & & & & & -1 & & -1 & 4  
+                        \end{array}  
+                    \right]
+                    \begin{bmatrix}
+                        u_{11}\\
+                        u_{12}\\
+                        u_{13}\\
+                        u_{21}\\
+                        u_{22}\\
+                        u_{23}\\
+                        u_{31}\\
+                        u_{32}\\
+                        u_{33}
+                    \end{bmatrix} = 
+                    \begin{bmatrix}
+                        f_{11}\\
+                        f_{12}\\
+                        f_{13}\\
+                        f_{21}\\
+                        f_{22}\\
+                        f_{23}\\
+                        f_{31}\\
+                        f_{32}\\
+                        f_{33}
+                    \end{bmatrix}
+                \]
+            \end{example}
+
+
+            \underline{\textbf{Aber:}} Um die Lösung von (\ref{g3.1}) gut zu approximierenm ist oft $N\gg 1$ erforderlich.
+            Für kleine bis mittlere $N$, d.h. in 2022 je nach Modell $\sim$ 10 Millionen, sind graphenbasierte Löser eine Option.
+
+            Was tun für große $N$?
+
+            \underline{\textbf{Beobachtung:}} Matrix-Vektor-Multiplikation sind für dünn besetze Matrizen in $O(N)$ berechenbar.
+
+            \underline{\textbf{Frage:}} Wie bauen wir gute Löser für LGS (lineare Gleichungssysteme) nur unter Anwendung von 
+            Matrix-Vektor-Multiplikationen?
+
+            \underline{\textbf{Idee:}} Benutze  Orthogonalität um eine Bestapproximationseigenschaft zu erhalten.
+
+        \section{Grundidee von Projektionsmethoden}
+
+            Sei $A\in\R^{n\times n},b\in\R^n$ und $K,L$ Unterräume vom $\R^n$.
+
+            \underline{\textbf{Idee:}} Finde eine approximative Lösung $\tilde{x}$ zu $Ax=b$ mit 
+            \[\tilde{x}\in K \text{ und } b-A\tilde{x}\perp_2 L\]
+            Kanonische Wahl: $L=AK$.
+
+            Falls wir eine Startnährung $x_0$ zu $x$ kennen, können wir $\tilde{x}$ in $x_0+K$ suchen:
+
+            Finde $\tilde{x} \in x_0+K \text{ mit } b-A\tilde{x}\perp_2 L$
+
+            \underline{\textbf{Beobachtung:}} $\tilde{x}\in x_0+K\implies \exists d\in K: \tilde{x}=x_0+d$
+
+            \[\implies \underbrace{b-A(x_0}_{r}+d)\perp_2 L\]
+
+            \[\iff r_0-Ad \perp_2 L\]
+
+            Eine approximative Lösung $\tilde{x}=x_0+d$ muss also erfüllen:
+
+            \begin{equation}\label{g3.3}
+                \begin{cases}
+                    \tilde{x}=x_0+d & \\
+                    \langle r_0-Ad,w \rangle_2 = 0  & \forall w\in L
+                \end{cases}
+            \end{equation}
+
+            \underline{\textbf{Idee:}} Wähle $x_0,K,L$, berechne $d\in K$ durch Lösen eines Unterproblems. Setze 
+            $x_1=x_0+d$, wähle neue Unterräume, beginne von vorne.
+
+            Wie implementieren wir diese Idee im Computer?
+
+            Sei $K=\text{span}\{v_1, \dots, v_n\},L=\{w_1,\dots,w_n\}$
+
+            $V=[v_1\vert \dots\vert v_n]$ und $W=[w_1\vert \dots\vert w_n]$
+
+            (\ref{g3.3}) ist äquivalent zu 
+
+            \begin{equation}\label{g3.4}
+                \begin{cases}
+                    \tilde{x} = x_0+Vy &  y\in\R^m\\
+                    W_i^t A Vy = W_i^t r_0 & i=1,\dots n \iff \underbrace{W^tA}_{m\times m}Vy = W^tr_0
+                \end{cases}
+            \end{equation}
+
+            $\implies \tilde{x}=x_0+V(W^tAV)^{-1}W^t r_0$ % TODO: Überprüfen
+
+            \begin{algorithm}[H]\label{a3.2}
+                \caption{Prototyp einer interativen Projektionsmethode}
+                \textbf{Input:} $A\in\R^{n\times n},b\in\R^n$, Fehlertoleranz $\alpha$\\
+                \textbf{Output:} Nährung $x_{i+1}\approx x$
+                \begin{algorithmic}
+                \State i=0
+                \While {Fehlertoleranz noch nicht erreicht}
+                    \State Wähle $K_i,L_i$
+                    \State Wähle Basen $V,W$ von $K_i,L_i$
+                    \State $r_1=Ax_i$
+                    \State $y=(W^tAV)^{-1}W^tr_i$
+                    \State $x_{i+1}=x_i+Vy_i$
+                    \State $i=i+1$
+                \EndWhile
+                \end{algorithmic}
+            \end{algorithm}
+
+            \underline{\textbf{Aber:}} $W^tAV$ ist nicht notwendigerweise invertierbar:
+
+            \begin{example}\label{b3.3}
+                \[
+                    A=\left[
+                        \begin{array}{c|c}
+                            0 & I\\\cline{1-2}
+                            I & I
+                        \end{array}
+                    \right]\in\R^{2m\times 2m}
+                \]
+                \[
+                    K=L=\text{span}\{e_1,\dots,e_m\}\implies V=W=\
+                    \left[
+                        \begin{array}{c}
+                            I_m\\\cline{1-1}
+                            0
+                        \end{array}
+                    \right]\in K^{2m\times m}
+                \]
+                \[\implies W^t A V =0 \text{ ist nicht invertierbar.}\]
+            \end{example}
+
+            \begin{lemma}\label{3.4}
+                Sei einer der folgenden Bedingungen erfüllt:
+                \begin{enumerate}
+                    \item $A$ ist spd, $K=L$
+                    \item $A$ invertierbar, $L=AK$
+                \end{enumerate}
+                Dann ist $W^tAV$ für alle Basen von $K,L$ invertierbar.
+            \end{lemma}
+
+            \begin{proof}
+                \textbf{1.:} $L=K\implies W=V\delta$ mit $\delta \in R^{m\times m}$ invertierbar.
+
+                $\implies B=W^tAV=\delta^tV^tAV$ % TODO: überprüfen
+
+                \[0<\underbrace{y^tAy}_{=\underbrace{x^tV^t A V x}_{\text{spd, invertierbar}}},y=Vx\]
+
+                \textbf{2.:} $L=AK \implies W=AV\delta,\delta\in\R^{m\times m}$ invertierbar
+
+                \[\implies B=W^tAV=\delta^t\underbrace{V^tA^tAV}_{\text{spd}} \implies\text{ invertierbar } \implies \text{ Beh.}\]
+            \end{proof}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 05 am 25.10.2022\xrfill[0.7ex]{1pt}
         
 
 \end{document}
