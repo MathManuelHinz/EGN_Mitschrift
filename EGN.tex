@@ -909,8 +909,17 @@
 
             \begin{align*}
                 \stackrel{\text{Bem. \ref{b1.13}}}{\implies} \left\Vert x-0 \right\Vert_2 = \min_{y\in \tilde{x}+ \ker(A)} \left\Vert y-0 \right\Vert_2 &\iff x\in (\tilde{x}+\ker(A))^\perp \\
-                &\iff x\in \ker(A)^\perp % TODO: Überprüfen    
+                &\iff x\in \ker(A)^\perp 
             \end{align*}
+
+            \begin{tcolorbox}[enhanced,breakable,
+                title=Anmerkung]
+                Hier ist nicht ganz klar, was mit $(\tilde{x}+\ker(A))^\perp$ gemeint ist, da dies z.B. für $\ker(A)=\text{span}\{(0,1)^t\}$ und $\tilde{x}=(1,0)^t$ nur $\{0\}$ ist, was natürlich nicht der Intuition entspricht!
+                
+                Statt der ursprünglichen Definition müssen wir hier wieder zurück schieben ($-\tilde{x}$ rechnen), was kein Problem ist, da wir o.B.d.A $\tilde{x}\perp \ker(A)$ vorraussetzen dürfen, bevor wir das Skalarprodukt berechnen!
+
+                Zum Beispiel ist also $v=(1,0)^t$ im obigen Beipspiel doch im orthogonalen Komplement, da $\langle v, \tilde{x}+u-\tilde{x}\rangle_2=0$ für $u\in \ker(A)$
+            \end{tcolorbox}
             
             \begin{figure}[H]
                 \centering
@@ -1069,7 +1078,11 @@
 
             $\rightsquigarrow$ Überziehe $\Omega$ mit einem regelmäßigen Gitter mit Maschenweite $h=\frac{1}{n},n\in\N$.
 
-            % Bild
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.25\textwidth]{Bild011}
+                \caption{Gitter}
+            \end{figure}
 
             Bezeichne die Gitterpunkte mit $x_{ij}$ und $u_{ij}=u(x_{ij})$.
 
