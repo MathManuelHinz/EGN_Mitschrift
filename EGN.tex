@@ -1259,6 +1259,154 @@
 
             \noindent
             \xrfill[0.7ex]{1pt}Ende von Vorlesung 05 am 25.10.2022\xrfill[0.7ex]{1pt}
-        
+
+        \section{Verfahren des steilsten Abstiegs}
+
+            \underline{\textbf{Idee:}} Wähle $K=L=\text{span}\{r_i\}=\text{span}\{b-Ax_i\}$
+
+            \[\implies x_{i+1}=x_i+\underbrace{\alpha_i r_i}_{d_i\in K}\]
+
+            \[\implies \alpha = \frac{r_i^tr_i}{r_i^tAr_i}\]
+            
+            \begin{algorithm}[H]\label{a3.5}
+                \caption{Verfahren des steilsten Abstiegs}
+                \textbf{Input:} $A,b$, Startvektor $x_0$, Fehlertoleranz\\
+                \textbf{Output:} Nährung $x_{i+1}\approx x$
+                \begin{algorithmic}
+                \While {Fehlertoleranz noch nicht erreicht} \Comment{Praxis $\epsilon=10^{-8}$, $\left\Vert r_i \right\Vert_2<\epsilon$}
+                    \State $r_i=b-Ax_i$
+                    \State $\alpha_i= \frac{r_i^tr_i}{r_i^tAr_i}$
+                    \State $x_{i+1}=x_i+\alpha_i r_i$
+                \EndWhile
+                \end{algorithmic}
+            \end{algorithm}
+
+            \begin{remark}\label{b3.6}
+                Wegen (\ref{g3.3}) gilt:
+                \begin{align*}
+                    0&=\langle r_i-Ad_i,r_i \rangle_2\\
+                    &=\langle b-Ax_i-Ad_i,r_i \rangle_2\\
+                    &=\langle b-Ax_{i+1},r_i \rangle_2\\
+                    &= \langle Ax-Ax_{i+1}, r_i\rangle_2\\
+                    &= \langle x-x_{i+1}, r_i\rangle_A = (\star)
+                \end{align*}
+            \end{remark}
+
+            Mit 
+            \[
+                \langle \cdot,\cdot \rangle_A=\langle A\cdot,\cdot \rangle_2
+            \]
+
+            Aus $(\star)$ folgt 
+
+            \begin{align*}
+                0=(\star) &\iff x-x_{i+1} \perp_A r_i \\
+                &\iff x-x_{i+1} \perp_A x_i+\text{span}\{r_i\}\\
+                &\stackrel{\text{Satz \ref*{s1.9}}}{\iff} \left\Vert x-x_{i+1} \right\Vert_A=\min_{y\in x_i+\text{span}\{r_i\}} \left\Vert x-y \right\Vert_A\\
+                &\iff \frac{1}{2} \left\Vert x-x_{i+1}  \right\Vert_A^2 = \min_{\alpha\in \R}=\frac{1}{2} \left\Vert  x-x_i-\alpha r_i \right\Vert_A^2
+            \end{align*}
+
+            Betrachte $f(x_i)=\frac{1}{2}\left\Vert x-x_i \right\Vert_A^2 = \frac{1}{2} \langle A(x-x_i),x-x_i \rangle_2$
+
+            \[
+                f'(x_i)=-\underbrace{Ax}_{=b}+Ax_i=-r_i    
+            \]
+
+            D.h. am Punkt $x_i$ gehen wir in Richtung des steilsten Abstiegs,
+
+            \begin{theorem}\label{s3.7}
+                Sei $A\in\R^{n\times n}$ spd. Dann gilt für die Iterierung des Verfahrens des steilsten Abstiegsm dass:
+                \begin{align*}
+                    \left\Vert x-x_{i+1} \right\Vert_A &\leq \frac{\lambda_{\max}(A)-\lambda_{\min}(A)}{\lambda_{\max}(A+\lambda_{\min}(A))} \left\Vert x-x_i \right\Vert_A\\
+                    &\stackrel{\frac{1}{\lambda_{\min}}}{=}\frac{\cond_2(A)-1}{\cond_2(A)+1}\left\Vert x-x_i \right\Vert_A
+                \end{align*}
+                wobei $\lambda_{\max},\lambda_{\min}$ die größten, kleinsten Eigenwerte sind.
+            \end{theorem}
+
+            \begin{proof}
+                Übung %TODO
+            \end{proof}
+
+            \begin{remark}\label{b3.8}
+                Im Prinzip lassen sich mit Hilfe der Normalengleichung auch allgemeinere (invertierbare) Matrizen behandeln. 
+                Hierbei wird die Kondition verschlechtetertm d.h. die Konvergenz verschlechtert sich.
+            \end{remark}
+
+        \section{Krylovräume}
+
+            \underline{\textbf{Beobachte:}} Im Verfahren des steilsten Abstiegs gilt:
+            \[
+                x_i=x_0+\alpha_0r_0+\dots+\alpha_{i-1}r_{i-1} = x_0+\alpha_0r_0+\dots+(\alpha_{i-2}I+\alpha_{i-1}(I-\alpha_{i-2}))r_{i-2}
+            \]
+            \[=x_0 q_{i-1}(A)r_0, q_{i-1}\in\Pi_{i-1}\]
+
+            \underline{\textbf{Idee:}} Finde eine bessere Approximation von $x_i$ in $x_0+K_{i-1}(A,r_0)$.
+
+            \begin{definition}\label{d3.9}
+                Sei $A\in\R^{n\times n},v\in\R^n,n\geq 1$. Der Raum 
+                \[K_m=\text{span}(v,Av,A^2v,\dots,A^{m-1}v)\]
+                heißt \textbf{Kylovraum} von $A$ zu $v$.                
+            \end{definition}
+
+            Es gilt $K_m(A,v)\subseteq K_{m+1}(A,v)$
+
+            \begin{lemma}\label{l3.10}
+                Sei $\R^{n\times n},v\in\R^n$. Dann gilt:
+                \begin{enumerate}
+                    \item $\dim K_m(A,v)\leq \min\{m,n\}$
+                    \item $\dim(K_m(A,v))=\dim(K_{m+1}(A,v))=m\implies \dim(K_{m+i}(A,v))=m,i=0,1,\dots$
+                    \item Für $m$ wie im 2. gilt \[\{Ax:x\in K_m(A,v)\}\subseteq K_m(A,v)\]
+                    D.h. $K_m(A,v)$ ist invariant unter $A$.
+                \end{enumerate}
+            \end{lemma}
+
+            \begin{proof}
+                Übung   
+            \end{proof}
+
+            \begin{remark}\label{b3.11}
+                Betrachte $Ax=b$ mit Startnährung $x_0$, Residuum $r_0=b-Ax_0$. Für $i=0,\dots$. Wähle
+                \[x_{i+1}\in x_0+K_{i-1}(A,r_0)\]
+                \[\implies x_{i+1}x_0=q_i(A)r_0\]
+                \[\implies r_{i+1}=b-Ax_{i+1}=\underbrace{b-Ax_0}_{r_0}-Aq_i(A)r_0\]
+                \[=q_{i+1}(A)r_0\in K_{i+2}(A,r_0)\]
+            \end{remark}
+
+            \underline{\textbf{Das bedeutet:}} Sind $K,L$ geeignete Krylovräume in einer Projektionsmethode, dann können 
+            wwir immer garantieren, dass das Ergebnis in einem Krylovraum ist.
+
+            \underline{\textbf{Aber:}} Die Vektoren $v,Av,\dots,A^nv$ sind numerisch keine guten Basen der Krylovräume, da sie zunehmend in eine 
+            änhliche Richtung zeigen.
+
+        \section{Arnoldi-Verfahren}
+
+            \underline{\textbf{Gesucht:}} Numerisch gutartige Basis von $K_m(A,v)$, welche einfach zu einer gutartigen Basis von $K_{m+1}(A,v)$ erweitert werden kann.
+
+            \underline{\textbf{Idee:}} Arrangiere die Vektoren $v,Av,\dots$ in einer ``wachsenden'' Matrix
+            \[[v\vert Av\vert A^2v\vert \dots]\]
+            und wende auf jede Spalte ein Orthogonalisierungsverfahren (Gram-Schmidt, Householder,Givens) an.
+
+            \begin{algorithm}[H]\label{a3.12}
+                \caption{Arnoldi-Verfahren (Gram-Schmidt Variante)}
+                \textbf{Input:} $A\in\R^{n\times n},b\in\R^n,m\in\N$\\
+                \textbf{Output:} $V_m=[v_1\vert \dots\vert v_m]$ ONB von $K_m(A,v),v_{m+1}\in\R^n,H_{m+1,m}\in\R^{(m+1)\times m}$
+                \begin{algorithmic}
+                \State $v_1=\frac{v}{\left\Vert v \right\Vert_2}$
+                \For{$j=1,m$}
+                    \State $z=Av_j$ \Comment $\neq A^{j-1}r_0$
+                    \State $h_{ij}=\langle z,v_i \rangle_2,i=1,\dots j$
+                    \State $w_j=z-\sum_{i=1}^j h_{ij}v_i$
+                    \State $h_{j+1,j}=\left\Vert w_j \right\Vert_2$
+                    \If{$h_{j+1,j}=0$} 
+                        \State stop \Comment Krylovraum stagniert
+                    \EndIf
+                \State $v_{j+1}=\frac{w_j}{h_{j+1,j}}$
+                \EndFor
+                \end{algorithmic}
+            \end{algorithm}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 06 am 27.10.2022\xrfill[0.7ex]{1pt}
+            
 
 \end{document}
