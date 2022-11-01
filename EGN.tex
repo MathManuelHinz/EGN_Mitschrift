@@ -847,7 +847,7 @@
                 \For{$j=1,\dots, n$} \Comment Iterieren über die Spalten
                     \State Berechne $v,\alpha$ wie in (\ref{g2.4}) ,mit $a=A[j:m,j]\in\R^{m-j+1}$
                     \State $v=\frac{1}{v_1}v$ \Comment Erster Eintrag wird nicht gespeichert, daher normalisieren wir
-                    \State Berechne $A[j:m,j:n]=\left(I-\frac{vv^t}{v^tv}\right)A[j:m,j:n]$ wie in (\ref{g2.5})
+                    \State Berechne $A[j:m,j:n]=\left(I-2\frac{vv^t}{v^tv}\right)A[j:m,j:n]$ wie in (\ref{g2.5})
                     \If{$j<m$}
                         \State A[j+1:m,j]=v[2:m-j+1]\Comment Index startet von 1 
                     \EndIf
