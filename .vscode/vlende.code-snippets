@@ -29,5 +29,12 @@
 	"underline_bold": {
 	 "prefix": "ub",
 	 "body": ["\\underline{\\textbf{$1}}$0"],
+	},
+	"Kommentar": {
+	 "prefix": "ek",
+	 "body": ["\\begin{tcolorbox}[enhanced,breakable,",
+	 "title=$1]",
+	 "$2",
+    "\\end{tcolorbox}","$0"],
 	}
 }

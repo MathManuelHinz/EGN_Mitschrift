@@ -1407,6 +1407,171 @@
 
             \noindent
             \xrfill[0.7ex]{1pt}Ende von Vorlesung 06 am 27.10.2022\xrfill[0.7ex]{1pt}
+
+            \begin{lemma}\label{l3.13}
+                Falls das Arnoldi-Verfahren nicht vorzeitig abbricht, ist $v_1,\dots,v_m$ eine 
+                ONB von $K_m(A,r_0)$.
+            \end{lemma}
+            \begin{proof}
+                Orthogonalität: Ok
+
+                Orthonormal: Ok
+
+                Basis von $K_m(A,r_0)$: $j=1$ ok
+
+                $j\implies j+1$
+
+                $h_{j+1,j}v_j = w_j$ (folgt aus der letzten Zeile von Algorithmus \ref{a3.12}).
+                \[
+                    w_j=\underbrace{Av_j}_{\in K_j(A,r_0)\implies v_j=q_{j-1}(A)v}-\underbrace{\sum_{i=1}^2h_{i,j}v_i}_{\tilde{q}_{j-1}(A)v, \tilde{q}_{j-1}\in \Pi_{j-1}}  = (\star)
+                \]
+                \[
+                    (\star) = Aq_{j-1}(A)v_j - \tilde{q}_{j-1}(A)v_j=\underbrace{q_{j}(A)v}_{\in K_{j+1}(A,r_0)}    
+                \]
+            \end{proof}
+
+            \underline{\textbf{Bemerke:}} Diese Matrix $H_{h+1,j}\in\R^{(j+1)\times j}$ hat eine bestimmte Sturktur,
+            die Hessenberg-Struktur genannt wird.
+
+            \begin{tcolorbox}[enhanced,breakable,
+                title=Vorteile dieser Struktur]
+                Zum Beipspiel kann man eine $QR$-Zerlegung finden, in dem man Pro Spalte eome Givensrotation anwendet.
+            \end{tcolorbox}
+
+            \begin{lemma}\label{l3.14}
+                Seien $V_m\in\R^{n\times n}, H_{m+1,m}\in\R^{(m+1)\times m}$, wie im Arnoldi-Verfahren erzeugt. Sei $H_{m,m}\in\R^{m\times m}$ wie $H_{m+1,m}$, aber 
+                ohne die letzte Zeile. Dann gilt:
+                \begin{equation}\label{g3.5}
+                    \underbrace{A}_{\in \R^{n\times n}}\underbrace{V_m}_{\in \R^{n\times m}}=\underbrace{V_m}_{\in \R^{n\times m}}\underbrace{H_{m,m}}_{\in \R^{m\times m}}+\underbrace{w_me_m^t}_{\in \R^{m\times m}}=\underbrace{V_{m+1}}_{\in \R^{n\times m+1}}\underbrace{H_{m+1,m}}_{\in \R^{m+1\times m}}
+                \end{equation}
+                
+                \begin{equation}\label{g3.6}
+                    V_m^tAV_m=H_{m,m}
+                \end{equation}
+
+            \end{lemma}
+
+            \begin{proof}
+                Gemäß Algorithmus haben wir 
+                \[
+                    Av_j=z=\underbrace{w_j}_{h_{j+1,j}v_j} + \sum_{i=1}^{j}h_{ij} v_i = \sum_{i=1}^{j+1} h_{ij} v_i : j=1,\dots, m    
+                \]
+                Daher gilt (\ref{g3.5}) (folgt aus Matrix Schreibweise).
+
+                Für (\ref{g3.6}):
+
+                \[
+                    V_m^t A V_m = \underbrace{V^t_m V_m}_{=I} H_{m,m}+ \underbrace{V_m^t w_m e_m^t}_{=0} = H_{m,m} 
+                \]
+            \end{proof}
+
+            \begin{lemma}\label{l3.15}
+                Sei $j$ der Iterationsindex, bei dem das Arnoldi-Verfahren das erste Mal abbricht. Dann gilt:
+
+                \[
+                  K_j(A,r_0)=\dots = K_m(A,r_0)  
+                \]
+                \[
+                  AV_m=V_m H_{m,m}  
+                \]
+            \end{lemma}
+
+            \begin{proof}
+                Übung.
+            \end{proof}
+
+        \section{Verfahren der vollständigen Orthogonalisierung}
+
+            \underline{\textbf{Ziel:}} Kombinieren von unserem Wissen über Projektionsmethoden mit demjenigen 
+            Wissen über Krylovräume.
+
+            \underline{\textbf{Zutaten:}}
+            \begin{itemize}
+                \item Finde $\tilde{x}\in x_0+K$ s.d. $bA\tilde{x}\perp L$
+                \item Wähle $K,L$ als Krylovräume in jeder Iteration
+                \item Wähle Basen $V,W$ von $K,L$ in jeder Iteration
+            \end{itemize}
+
+            \[
+                (\ref{g3.4}) \implies \begin{cases}
+                    \tilde{x}=x_0+Vy\\
+                    W^t A Vy = w^tr_0
+                \end{cases}    
+            \]
+
+            \underline{\textbf{Idee:}} Setze $r_0=b-Ax_0,K=L=K_m(A,r_0)$ im $m$-ter Iteration, 
+            $V=W$ ONB von $K_m(A,r_0)$, berechnet mittels Arnoldi-Verfahren.   
+
+            \underline{\textbf{Zutaten: aktualisiert}}:
+            \begin{itemize}
+                \item $r_0=b-Ax_0$
+                \item $\beta=\left\Vert r_0 \right\Vert_2,v_1=\frac{r_0}{\beta}$
+                \item \[
+                  \begin{cases}
+                    x_m=x_0+V_my_m\\
+                    \underbrace{V_m^t AV_m}_{\stackrel{\ref{g3.6}}{=}H_{m,m}}\underbrace{y_m}_{\beta v_1} = V_m^t r_0 \iff H_{m,m}y_m=\beta e_1
+                  \end{cases}  
+                \]
+            \end{itemize}
+
+            \begin{algorithm}[H]\label{a3.16}
+                \caption{Verfahren der vollständigen Orthogonalisierung}
+                \textbf{Input:} $A\in\R^{n\times n},b\in\R^n,x_0\in\R^n,m\in\N$\\
+                \textbf{Output:} $x_m\in x_0+K_m(A,r_0),b-Ax_m\perp K_m(A,r_0), x_m\approx A^{-1}b$
+                \begin{algorithmic}
+                \State $r_0=b-Ax_0,\beta=\left\Vert _0 \right\Vert_2,v_1=\frac{r_0}{\beta}$
+                \For{$j=1,m$}
+                    \State Bestimme $v_j, H_{j,j}$ mit Arnoldi-Verfahren (Stop beim Abbruch)
+                    \State Löse $H_{j,j}y_j = \beta e_1$
+                    \State $x_j=x_0+V_jy_j$
+                    \State Konvergenztest
+                \EndFor
+                \end{algorithmic}
+            \end{algorithm}
+
+            Was ist ein geeigneter Konvergenztest?
+
+            \begin{lemma}\label{l3.17}
+                Im Algorihtmus \ref{a3.16} gilt 
+                \[r_m=b-Ax_m=-h_{m+1,m}(e_m^ty_m)V_{m+1}\]
+                d.h. es gilt auch 
+                \[
+                    \left\Vert r_m \right\Vert_2 = \vert \underbrace{h_{m+1,m}}_{>0} (e^t_m y_m)\vert = h_{m+1,m} \left\vert e_m^ty_m \right\vert    
+                \]
+            \end{lemma}
+
+            \begin{proof}
+                \begin{align*}
+                    b-Ax_m&=b-A(x_0+V_my_m)\\
+                    &= r_0-  AV_my_m = (\star)
+                \end{align*}
+                \begin{align*}
+                    (\star)&= \underbrace{r_0}_{\beta v_1}-\underbrace{AV_m}_{\stackrel{\ref{g3.5}}{=}V_mH_{m,m}-w_me_m^t}\\
+                     &= \beta v_1 - \underbrace{V_m\underbrace{H_{m,m}y_m}_{=\beta e_1}}_{\beta v_1}- \underbrace{w_m}_{=h_{m+1,m}V_{m+1}}(e_m^ty_m)\\
+                     &= -h_{m+1,m}(e_m^ty_m)v_{m+1}
+                \end{align*}
+            \end{proof}
+
+            \begin{remark}\label{b3.18}
+                \begin{itemize}
+                    \item Hauptkosten (Alles mit Vektoren der Länge \underline{$n$})
+                        \begin{itemize}
+                            \item Matrix-Vektor-Multiplikation (1, Mal, sehr teuer)
+                            \item Skalarprodukte
+                            \item Vektor-Updates
+                        \end{itemize}
+                    $\implies$ Berechnen des Residuums wie in Lemma (\ref{l3.17}) lohnt sich.
+                    \item Speicherbedarf und Aufwand per Iteration werden in jeder Iteration teuer!
+                \end{itemize}
+            \end{remark}
+
+            \begin{tcolorbox}[enhanced,breakable,
+                title=Umgehen von großen $m$]
+                Wir können Neustarten, um $m$ wieder auf $1$ zu setzen und hohe Kosten von großen $m$ zu verhindern.
+            \end{tcolorbox}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 07 am 03.11.2022\xrfill[0.7ex]{1pt}
             
 
 \end{document}
