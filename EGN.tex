@@ -1519,10 +1519,10 @@
                 \textbf{Input:} $A\in\R^{n\times n},b\in\R^n,x_0\in\R^n,m\in\N$\\
                 \textbf{Output:} $x_m\in x_0+K_m(A,r_0),b-Ax_m\perp K_m(A,r_0), x_m\approx A^{-1}b$
                 \begin{algorithmic}
-                \State $r_0=b-Ax_0,\beta=\left\Vert _0 \right\Vert_2,v_1=\frac{r_0}{\beta}$
+                \State $r_0=b-Ax_0,\beta=\left\Vert r_0 \right\Vert_2,v_1=\frac{r_0}{\beta}$
                 \For{$j=1,m$}
-                    \State Bestimme $v_j, H_{j,j}$ mit Arnoldi-Verfahren (Stop beim Abbruch)
-                    \State Löse $H_{j,j}y_j = \beta e_1$
+                    \State Bestimme $V_j, H_{j,j}$ mit Arnoldi-Verfahren (Stop beim Abbruch)
+                    \State Löse $\underbrace{H_{j,j}}_{\in\R^{j\times j}}y_j = \beta e_1$
                     \State $x_j=x_0+V_jy_j$
                     \State Konvergenztest
                 \EndFor
@@ -1552,7 +1552,8 @@
                 \end{align*}
             \end{proof}
 
-            \begin{remark}\label{b3.18}
+            \underline{\textbf{Bemerke:}}
+
                 \begin{itemize}
                     \item Hauptkosten (Alles mit Vektoren der Länge \underline{$n$})
                         \begin{itemize}
@@ -1563,7 +1564,6 @@
                     $\implies$ Berechnen des Residuums wie in Lemma (\ref{l3.17}) lohnt sich.
                     \item Speicherbedarf und Aufwand per Iteration werden in jeder Iteration teuer!
                 \end{itemize}
-            \end{remark}
 
             \begin{tcolorbox}[enhanced,breakable,
                 title=Umgehen von großen $m$]
@@ -1572,6 +1572,251 @@
 
             \noindent
             \xrfill[0.7ex]{1pt}Ende von Vorlesung 07 am 03.11.2022\xrfill[0.7ex]{1pt}
+
+        \section{Das GMRES-Verfahren}
+
+            \underline{\textbf{Idee:}} Lemma (\ref{l3.17}) gibt uns eine explizite Darstellung
+            von $\left\Vert r_j \right\Vert_2$. Können wir die Idee dahinter benutzen, um $\left\Vert r_j \right\Vert_2$
+            in jeder Iteration zu minimieren?
+
+
+            \begin{align*}
+                r_j&=b-A\underbrace{x_j}_{=x_0+V_jy_j}\\
+                &= \underbrace{b-Ax_0}_{=r_0=\beta v_1=V_{m+1}\beta \underbrace{e_1}_{\in\R^{m+1}}}-\underbrace{AV_j}_{\stackrel{\ref{g3.5}}{=}V_{j+1}H_{j+1,j}}y_j\\
+                &= V_{j+1}(\beta e_1-H_{j+1,j}y_j)
+            \end{align*}
+
+            \[\implies \left\Vert r_j \right\Vert_2=\left\Vert V_{j+1}(\beta e_1-H_{j+1,j}y_j) \right\Vert_2\]
             
+            Da $ \left\Vert V_{j+1}z_{j+1} \right\Vert_2^2=z_{j+1}^tz_{j+1}=\left\Vert z_{j+1} \right\Vert_2^2$
+
+
+            \begin{equation}\label{g3.7}
+                \implies \left\Vert r_j \right\Vert_2=\left\Vert \underbrace{\beta e_1}_{\in\R^{j+1}} - \underbrace{H_{j+1,j}}_{\in\R^{j+1\times j}}\underbrace{y_j}_{\in\R^{j}} \right\Vert  
+            \end{equation}
+            
+            $\implies \left\Vert r_j \right\Vert_2$ wird minimal, falls $y_j$ als Lösung des linaren Ausgleichsproblems 
+            $H_{j+1,j}y_j=\beta e_1$ gewählt wird.
+
+            \begin{algorithm}[H]\label{a3.18} % Vllt. auch 3.18?
+                \caption{GMRES-Verfahren, Generalized Minimal Residual Method, Prototyp}
+                \textbf{Input:} $A\in\R^{n\times n},b\in\R^n,x_0\in\R^n,m\in\N$\\
+                \textbf{Output:} $x_m\in x_0+K_m(A,r_0),\left\Vert r_m \right\Vert_2=\left\Vert b-Ax_m \right\Vert_2$ minimal
+                \begin{algorithmic}
+                \State $r_0=b-Ax_0,\beta=\left\Vert r_0 \right\Vert_2,v_1=\frac{r_0}{\beta}$
+                \For{$j=1,m$}
+                    \State Bestimme $V_{j+1}, H_{j+1,j}$ mit Arnoldi-Verfahren (Stop beim Abbruch)
+                    \State Löse $H_{j+1,j}y_j=\beta e_1$
+                    \State $x_j=x_0+V_jy_j$
+                    \State Konvergenztest
+                \EndFor
+                \end{algorithmic}
+            \end{algorithm}
+
+            \begin{remark}\label{b3.19} % vllt. 3.19
+                \begin{enumerate}
+                    \item Bis auf die Minimalitätseigenschaft von $\left\Vert r_j \right\Vert_2$ stimmen die Algotihmen \ref{a3.16} und \ref{a3.18} weitgehen überein.
+                    D.h. sie haben auch ähnliche Nachteile.
+                \item Algorithmus \ref{a3.18} kann auch als Projektionsmethode mit $K=K_m(A,r_0)$ und 
+                      $L=AK$ hergeleitet werden. (2 Zeiler, wenn man die richtige Formel sieht)
+                \end{enumerate}
+            \end{remark}
+
+            \underline{\textbf{Frage:}} wie können wir den Algortihmus \ref{a3.18} praxistauglich machen.
+            D.h.: Was ist ein geeigneter Konvergenztest und wie lösen wir das lineare Ausgleichsproblem?
+
+            \underline{\textbf{Beobachte:}} ()\ref{g3.7}) sagt: $\left\Vert r_j \right\Vert_2$ ist genau der Fehler des linearen 
+            Ausgleichsproblems. Diesen Fehler können wir explizit berechnen!
+
+            Analog zum Beweis von Satz \ref{s2.11}:
+
+            Sei \(H_{j+1,j}=Q_jR_j=\underbrace{Q_j}_{\in\R^{j+1,j+1}}\begin{bmatrix}
+                R_j\\\underbrace{0}_{\in\R}
+            \end{bmatrix}\) eine QR-Zerlegung.
+
+            Sei 
+            \[
+                Q^t\beta e_1 = \begin{bmatrix}
+                    \overbrace{b_1}^{\in\R^j}\\\underbrace{b_2}_{\in\R}
+                \end{bmatrix}
+            \]
+
+            \[
+                \left\Vert r_j \right\Vert_2^2 \stackrel{(\ref{g3.7})}{=} \left\Vert \beta e_1- H_{j+1,j}y_j \right\Vert_2^2 = \left\Vert  Q^t(\beta e_1- H_{j+1,j}y_j)  \right\Vert_2^2 = (\star)
+            \]
+
+            
+            \[
+                (\star) = \left\Vert \begin{pmatrix}
+                    b_1-\tilde{R}_jy_j\\
+                    b_2
+                \end{pmatrix} \right\Vert_2^2    
+            \]
+
+            \[
+                = \underbrace{\left\Vert  b_1-\tilde{R}_jy_j\right\Vert_2^2}_{=0\text{ falls $H_{j+1,j}$ bzw. $\tilde{R}_j$ vollen Rang hat}} + \underbrace{\left\Vert b_2 \right\Vert_2^2}_{=\vert b \vert^2} 
+            \]
+             
+            \[
+                \implies \left\Vert r_j \right\Vert_2 = \left\vert b_2 \right\vert    
+            \]  
+
+            Wir berechnen $b_2$ als Nebenprodukt beim Lösen des linearen Ausgleichsrpoblems.
+
+            \underline{\textbf{Aber:}} In jeder Iteration eine QR-Zerlegung zu berechnen ist teuer. Wie geht es besser?
+
+            \underline{\textbf{Beobachte:}} \begin{itemize}
+                \item $H_{j+1,j}$ hat Hessenbergstruktur, d.h. \(H_{j+1,j}\) hat Ist eine rechte obere Dreiecksmatrix, wo zusätzlich die utere Diagonale nicht notwendigerweise 0 ist. 
+                Dafür kann mit $j$ Givensrotaionen eine QR-Zerlegung berechnet werden.
+                \item Beim Iterationsschritt $j\implies j+1$ werden jediglich eine neue Spalte und eine neue Zeile an $H_{j+1,j}$ drangehängt um 
+                um $H_{j+2,j+1}$ zu erhalten. Die restlichen Einträge bleiben unverändert.
+            \end{itemize}
+
+            Sei $H_{j+1,j}=Q_jR_j$ eine QR-Zerlegung.
+
+            \begin{equation*}
+                \begin{bmatrix}Q_j^t & 0\\ 0 & 1\end{bmatrix} H_{j+2,j+1} = 
+                \begin{bmatrix}Q_j^t & 0\\ 0 & 1\end{bmatrix} \begin{bmatrix}H_{j+1,j} & \star\\ 0 & \star \end{bmatrix} =
+            \end{equation*}
+
+            % Matrix einfügen
+
+            Die letzte Matrix kann mittels einer einzigen Givensrotation in obere Dreiecksgestalt gebracht werden.
+
+            $\implies$ Erweitere QR-Zerlegung iin jedem Schrit.
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 08 am 08.11.2022\xrfill[0.7ex]{1pt}
+            
+            \begin{algorithm}[H]\label{a3.20} % Vllt. auch 3.18?
+                \caption{GMRES}
+                \textbf{Input:} $A\in\R^{n\times n},b\in\R^n,x_0\in\R^n,m\in\N$\\
+                \textbf{Output:} $x_m\in x_0+K_m(A,r_0),\left\Vert r_m \right\Vert_2=\left\Vert b-Ax_m \right\Vert_2$ minimal
+                \begin{algorithmic}
+                \State $r_0=b-Ax_0,\beta=\left\Vert r_0 \right\Vert_2,v_1=\frac{r_0}{\beta}$
+                \State $\hat{b}=\beta e_1$
+                \For{$j=1,m$}
+                    \State Bestimme $V_{j+1}, H_{j+1,j}$ mit Arnoldi-Verfahren \Comment Durch Anhängen von Spalten/ Zeilen, Stop beim Abbruch
+                    \State Wende $G_{12},G_{23},\dots,G_{j-1,j}$ auf die letzte Spalte von $H_{j+1,j}$ an
+                    \State Bestimme $G_{j,j+1}$ so, dass $H_{h+1,j}=G_{j,j+1}H_{j+1,j}=\begin{bmatrix}
+                        \tilde{R}_{j+1}\\0
+                    \end{bmatrix}$
+                    \State $\hat{b}=G_{j,j+1}\hat{b}$
+                    \If{$\hat{b}$ klein}
+                        \State Löse $\tilde{R}_jy_j = [\hat{b}_i]_{i=1,\dots,j}$
+                        \State Gebe $x_j=x_0+V_jy_j$ zurück
+                    \EndIf
+                \EndFor
+                \State Berechne $x_m$ wie oben, beginne von vorne mit $x_0=x_m$
+                \end{algorithmic}
+            \end{algorithm}
+
+            \begin{remark}\label{b3.21}
+                \begin{enumerate}
+                    \item Außer, dass GMRES für invertierte Matrizen für $m=n$ konvergiert,
+                    ist bis heute wenig über Konvergenzaussagen bekannt.
+                    \item Außer der Matrix-Vektor-Multiplikation im Arnoldi-Verfahren sind an der j-ten Iteration 
+                    nur Vektor/ Matrizen der größe $~j$, bzw. $~j\times j$ beteiligt.
+                    Der Lösungsvektor wird erst nach erfülltem Konvergenzkriterium zusammengesetzt.
+                    \item Für $m\ll n$ sprechen wir von einem \textbf{Restarted-GMRES}. Oft ist z.B. $m=20$
+                    ausreichend.
+                    \item Das Verfahren der vollständigen Orthogonalisierung kann analog abgeändert werden.
+                    \item Falls das Arnoldi-Verfahren abbricht, ist die Nährungslösung exakt (``Lucky Breakdown'', Übung).
+                    \item Das GMRES-Verfahren ist heutzutage (2022) eines der beliebtesten Verfahren zum Lösen LGS ohne
+                    weitere, besondere Eigenschaften.
+                \end{enumerate}
+            \end{remark}
+
+        \section{Der symmetrische Lanczos-Prozess}
+
+            \underline{\textbf{Frage:}} Können wir ein besseres Verfahren herleiten, wenn wir zusäztliche
+            Annahmen zu unserer Matrix treffen?
+            z.B. Symmetrie oder spd?
+
+            \underline{\textbf{Beobachte:}} Für $A$ symmetrisch ist 
+            \begin{equation*}
+                H_{m,m} \stackrel{(\ref{g3.6})}{=} V_m^t A V_m
+            \end{equation*}
+            symmetrisch und hat Hessenberg-Struktur 
+            \begin{equation*}
+                H_{m,m}=\begin{bmatrix}
+                    \alpha_1 & \beta_1 & & & & \\
+                    \beta_1 & \alpha_2 & & & & \\
+                     & \beta_2 & \ddots & \ddots&  & \\
+                     &  & \ddots & \ddots & \ddots  & \\
+                     &  & & \beta_{n-1} & \alpha_{n-1} & \beta_{n-1}\\
+                     &  & & & \beta_n & \alpha_n 
+                \end{bmatrix}
+            \end{equation*} 
+
+            Die vom Arnoldi-Verfahren generierte Matrix $T_m=H_{m,m}$ ist tridiagonal und symmetrisch.
+            \underline{\textbf{Idee:}} 
+            \begin{itemize}
+                \item Die null-Einträge $h_{ij}=\langle v_j,v_i \rangle, i=1,\dots j-2$ müssen gar nicht erst berechnet werden
+                \item Wir können die Synmmetrie im Algorithmus explizit ausnutzen.
+            \end{itemize}
+            
+            \begin{algorithm}[H]\label{a3.22} % Vllt. auch 3.18?
+                \caption{Lanczos-Verfahren}
+                \textbf{Input:} $A\in\R^{n\times n}$ symmetrisch, $v\in\R^n,x_0\in\R^n,m\in\N$\\
+                \textbf{Output:} $V_m=\begin{bmatrix}
+                    v_1 & \dots v_m
+                \end{bmatrix}$ von $K_m(A,v), v_{m+1}\in\R^n,\beta\in\R,T_m\in\R^{m\times m}$
+                \begin{algorithmic}
+                \State $\beta_1=0,v_0=0$
+                \For{$j=1,m$}
+                    \State $h_{ij}=0,i=1,\dots,j_2$
+                    \State $h_{j-1,j}=\beta_j$
+                    \State $w_j=z-\sum_{i=1}^{j-1}h_{ij}v_i=Av_j-\beta_jv_{j-1}$ \Comment In der Praxis hat $w$ keinen Index
+                    \State $\alpha_j = \langle w_j, v_j\rangle_2=h_{jj}$
+                    \State $w_j=w_j-\alpha_j v_j$ \Comment $w=Av_j-\alpha_jv_j-\beta_jv_{j-1}$
+                    \State $\beta_{j+1}=\left\Vert w_j \right\Vert_2$
+                    \If{$\beta_{j+1}=0$} \Comment in der Praxis: testen ob Betrag klein
+                        \State Stop  
+                    \EndIf
+                    $v_{j+1}=\frac{w_j}{\beta_{j+1}}$
+                \EndFor
+                \State Berechne $x_m$ wie oben, beginne von vorne mit $x_0=x_m$
+                \end{algorithmic}
+            \end{algorithm}
+
+            \begin{remark}\label{b3.23}
+                Das Lanczos-Verfahren implementiert die Berechnung der ONB als Drei-Term-Rekursion,
+                die für höhere Iterationszahlen instabil werden kann.
+            \end{remark}
+
+            \underline{\textbf{Idee:}} Wende unser neues Verfahren auf die Methode der vollständigen
+            Orthogonalisierung an.
+
+            \begin{algorithm}[H]\label{a3.24} % Vllt. auch 3.18?
+                \caption{Lanczos-Verfahren für lineare GLeichungssysteme}
+                \textbf{Input:} $A\in\R^{n\times n}$ symmetrisch, $b\in\R^n,x_0\in\R^n,m\in\N$\\
+                \textbf{Output:} $x_m\in x_0 +K_m(A,r_0), x_m\approx A^{-1}b$
+                \begin{algorithmic}
+                \State $r_0=b-Ax_0,\beta=\left\Vert r_0 \right\Vert_2,v_1=\frac{r_0}{\beta_1}$
+                \For{$j=1,m$}
+                    \State Bestimme $V_j,T_j$ mittel Lanczos-Verfahren (Stop bei Abbruch)
+                    \State Löse $T_jy_j = \beta e_1$
+                    \State $x_0 = V_jy_j$
+                    Konvergenztest
+                \EndFor
+                \State Berechne $x_m$ wie oben, beginne von vorne mit $x_0=x_m$
+                \end{algorithmic}
+            \end{algorithm}
+
+            \begin{remark}\label{b3.25}
+                \begin{enumerate}
+                    \item Lemma \ref{l3.17}, d.h. 
+                    \[\left\Vert r_j \right\Vert_2=\left\Vert b-Ax_j \right\Vert_2=\beta_{j+1}\left\vert e_j^ty_j \right\vert\]
+                    gilt weiterhin. Wir können den Konvergenztest also ohne Berechnung von $x_j$ durchführen.
+                    \item Da $T_j$ tridiagonal ist, kann $T_jy_j=\beta e_1$ in $O(j)$ gelöst werden.
+                    \item Speicherbedarf und Rechenaufwand wachsen immer noch mit $j$. 
+                \end{enumerate}
+            \end{remark}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 09 am 10.11.2022\xrfill[0.7ex]{1pt}
+            
+
 
 \end{document}
