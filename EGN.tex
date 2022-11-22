@@ -728,8 +728,8 @@
             \end{bmatrix}
             \]
 
-            \begin{algorithm}[H]\label{a2.13}
-                \caption{}
+            \begin{algorithm}[H]
+                \caption{}\label{a2.13}
                 \textbf{Input:} $A\in\R^{m\times n},m\geq n$\\
                 \textbf{Output:} $R$ von der $QR$-Zerlegung ($A$ wird zerstört ``in place'')
                 \begin{algorithmic}
@@ -839,8 +839,8 @@
                 Siehe oben.
             \end{proof}
 
-            \begin{algorithm}[H]\label{a2.19}
-                \caption{}
+            \begin{algorithm}[H]
+                \caption{}\label{a2.19}
                 \textbf{Input:} $A\in\R^{m\times n},m\geq n$ ``Mehr Zeilen als Spalten''\\
                 \textbf{Output:} $A\in\R^{m\times n}$, obere rechte Dreiecksmatrix $R$, Rest Householder-Transformationen
                 \begin{algorithmic}
@@ -1024,8 +1024,8 @@
                 $\varphi$ minimal $\iff \varphi'(x_2)=0\implies $ Behauptung.
             \end{proof}
 
-            \begin{algorithm}[H]\label{a2.26}
-                \caption{}
+            \begin{algorithm}[H]
+                \caption{}\label{a2.26}
                 \textbf{Input:} $A\in\R^{m\times n},b\in\R^m$\\
                 \textbf{Output:} $x=A^\dagger b$
                 \begin{algorithmic}
@@ -1196,8 +1196,8 @@
 
             $\implies \tilde{x}=x_0+V(W^tAV)^{-1}W^t r_0$ % TODO: Überprüfen
 
-            \begin{algorithm}[H]\label{a3.2}
-                \caption{Prototyp einer interativen Projektionsmethode}
+            \begin{algorithm}[H]
+                \caption{Prototyp einer interativen Projektionsmethode}\label{a3.2}
                 \textbf{Input:} $A\in\R^{n\times n},b\in\R^n$, Fehlertoleranz $\alpha$\\
                 \textbf{Output:} Nährung $x_{i+1}\approx x$
                 \begin{algorithmic}
@@ -1268,8 +1268,8 @@
 
             \[\implies \alpha = \frac{r_i^tr_i}{r_i^tAr_i}\]
             
-            \begin{algorithm}[H]\label{a3.5}
-                \caption{Verfahren des steilsten Abstiegs}
+            \begin{algorithm}[H]
+                \caption{Verfahren des steilsten Abstiegs}\label{a3.5}
                 \textbf{Input:} $A,b$, Startvektor $x_0$, Fehlertoleranz\\
                 \textbf{Output:} Nährung $x_{i+1}\approx x$
                 \begin{algorithmic}
@@ -1317,7 +1317,7 @@
             \begin{theorem}\label{s3.7}
                 Sei $A\in\R^{n\times n}$ spd. Dann gilt für die Iterierung des Verfahrens des steilsten Abstiegsm dass:
                 \begin{align*}
-                    \left\Vert x-x_{i+1} \right\Vert_A &\leq \frac{\lambda_{\max}(A)-\lambda_{\min}(A)}{\lambda_{\max}(A+\lambda_{\min}(A))} \left\Vert x-x_i \right\Vert_A\\
+                    \left\Vert x-x_{i+1} \right\Vert_A &\leq \frac{\lambda_{\max}(A)-\lambda_{\min}(A)}{\lambda_{\max}(A)+\lambda_{\min}(A)} \left\Vert x-x_i \right\Vert_A\\
                     &\stackrel{\frac{1}{\lambda_{\min}}}{=}\frac{\cond_2(A)-1}{\cond_2(A)+1}\left\Vert x-x_i \right\Vert_A
                 \end{align*}
                 wobei $\lambda_{\max},\lambda_{\min}$ die größten, kleinsten Eigenwerte sind.
@@ -1386,8 +1386,8 @@
             \[[v\vert Av\vert A^2v\vert \dots]\]
             und wende auf jede Spalte ein Orthogonalisierungsverfahren (Gram-Schmidt, Householder,Givens) an.
 
-            \begin{algorithm}[H]\label{a3.12}
-                \caption{Arnoldi-Verfahren (Gram-Schmidt Variante)}
+            \begin{algorithm}[H]
+                \caption{Arnoldi-Verfahren (Gram-Schmidt Variante)}\label{a3.12}
                 \textbf{Input:} $A\in\R^{n\times n},b\in\R^n,m\in\N$\\
                 \textbf{Output:} $V_m=[v_1\vert \dots\vert v_m]$ ONB von $K_m(A,v),v_{m+1}\in\R^n,H_{m+1,m}\in\R^{(m+1)\times m}$
                 \begin{algorithmic}
@@ -1514,8 +1514,8 @@
                 \]
             \end{itemize}
 
-            \begin{algorithm}[H]\label{a3.16}
-                \caption{Verfahren der vollständigen Orthogonalisierung}
+            \begin{algorithm}[H]
+                \caption{Verfahren der vollständigen Orthogonalisierung}\label{a3.16}
                 \textbf{Input:} $A\in\R^{n\times n},b\in\R^n,x_0\in\R^n,m\in\N$\\
                 \textbf{Output:} $x_m\in x_0+K_m(A,r_0),b-Ax_m\perp K_m(A,r_0), x_m\approx A^{-1}b$
                 \begin{algorithmic}
@@ -1598,8 +1598,8 @@
             $\implies \left\Vert r_j \right\Vert_2$ wird minimal, falls $y_j$ als Lösung des linaren Ausgleichsproblems 
             $H_{j+1,j}y_j=\beta e_1$ gewählt wird.
 
-            \begin{algorithm}[H]\label{a3.18} % Vllt. auch 3.18?
-                \caption{GMRES-Verfahren, Generalized Minimal Residual Method, Prototyp}
+            \begin{algorithm}[H] % Vllt. auch 3.18?
+                \caption{GMRES-Verfahren, Generalized Minimal Residual Method, Prototyp}\label{a3.18}
                 \textbf{Input:} $A\in\R^{n\times n},b\in\R^n,x_0\in\R^n,m\in\N$\\
                 \textbf{Output:} $x_m\in x_0+K_m(A,r_0),\left\Vert r_m \right\Vert_2=\left\Vert b-Ax_m \right\Vert_2$ minimal
                 \begin{algorithmic}
@@ -1688,8 +1688,8 @@
             \noindent
             \xrfill[0.7ex]{1pt}Ende von Vorlesung 08 am 08.11.2022\xrfill[0.7ex]{1pt}
             
-            \begin{algorithm}[H]\label{a3.20} % Vllt. auch 3.18?
-                \caption{GMRES}
+            \begin{algorithm}[H] % Vllt. auch 3.18?
+                \caption{GMRES}\label{a3.20}
                 \textbf{Input:} $A\in\R^{n\times n},b\in\R^n,x_0\in\R^n,m\in\N$\\
                 \textbf{Output:} $x_m\in x_0+K_m(A,r_0),\left\Vert r_m \right\Vert_2=\left\Vert b-Ax_m \right\Vert_2$ minimal
                 \begin{algorithmic}
@@ -1756,8 +1756,8 @@
                 \item Wir können die Synmmetrie im Algorithmus explizit ausnutzen.
             \end{itemize}
             
-            \begin{algorithm}[H]\label{a3.22} % Vllt. auch 3.18?
-                \caption{Lanczos-Verfahren}
+            \begin{algorithm}[H] % Vllt. auch 3.18?
+                \caption{Lanczos-Verfahren}\label{a3.22}
                 \textbf{Input:} $A\in\R^{n\times n}$ symmetrisch, $v\in\R^n,x_0\in\R^n,m\in\N$\\
                 \textbf{Output:} $V_m=\begin{bmatrix}
                     v_1 & \dots v_m
@@ -1788,8 +1788,8 @@
             \underline{\textbf{Idee:}} Wende unser neues Verfahren auf die Methode der vollständigen
             Orthogonalisierung an.
 
-            \begin{algorithm}[H]\label{a3.24} % Vllt. auch 3.18?
-                \caption{Lanczos-Verfahren für lineare GLeichungssysteme}
+            \begin{algorithm}[H] % Vllt. auch 3.18?
+                \caption{Lanczos-Verfahren für lineare GLeichungssysteme}\label{a3.24}
                 \textbf{Input:} $A\in\R^{n\times n}$ symmetrisch, $b\in\R^n,x_0\in\R^n,m\in\N$\\
                 \textbf{Output:} $x_m\in x_0 +K_m(A,r_0), x_m\approx A^{-1}b$
                 \begin{algorithmic}
@@ -1797,8 +1797,8 @@
                 \For{$j=1,m$}
                     \State Bestimme $V_j,T_j$ mittel Lanczos-Verfahren (Stop bei Abbruch)
                     \State Löse $T_jy_j = \beta e_1$
-                    \State $x_0 = V_jy_j$
-                    Konvergenztest
+                    \State $x_j =x_0 V_jy_j$
+                    \State Konvergenztest
                 \EndFor
                 \State Berechne $x_m$ wie oben, beginne von vorne mit $x_0=x_m$
                 \end{algorithmic}
@@ -1817,6 +1817,517 @@
             \noindent
             \xrfill[0.7ex]{1pt}Ende von Vorlesung 09 am 10.11.2022\xrfill[0.7ex]{1pt}
             
+            \underline{\textbf{Frage:}}  Können wir es vermeiden die Basis $V_j$ vom Krylovraum 
+            zu speichern?
 
+            \underline{\textbf{Beobachte:}} Betrachte $LR$-zerlegung
+            \begin{equation*}
+                T_m=L_mR_m = \begin{pmatrix}
+                    1 & & &\\
+                    \lambda_2 & \ddots & & \\
+                    & \ddots & \ddots &\\
+                    && \lambda_m & 1
+                \end{pmatrix}
+                \begin{pmatrix}
+                    \eta_1 & \beta_2& &\\
+                     & \ddots & \ddots& \\
+                    && \ddots & \beta_m \\
+                    &&  & \eta_m
+                \end{pmatrix}
+            \end{equation*}
+
+            Zeile und Spalte ergänzen:
+            \[\lambda_m=\frac{\beta_m}{\eta_{m+1}}, \eta_m = \alpha_m -\lambda_m\beta_m\]
+
+            Wobei $\alpha_i$ die Einträge auf der Diagonalen und $\beta_j$ die Einträge der Nebendiagonalen von $T_j$ sind.
+
+            \[\implies x_m= x_0 + \underbrace{V_my_m}_{T^{-1}_m\beta e_1=R^{-1}_mL^{-1}_m \beta e_1}\]
+            \[x_0=\underbrace{V_mR^{-1}_m}_{P_m}\underbrace{L^{-1}_m\beta e_1}_{z_m}\]
+
+            \[P_mR_m=V_m\implies v_m=\beta_m p_{m-1}+\eta_m p_m\]
+            \[\implies p_m=\frac{1}{2}(v_m-\beta_m p_{m-1})\]
+
+            D.h. $P_m$ kann mit wachsendem $m$ einfach und effizient berechnet werden.
+
+            % Falsch
+            \[z_m=L_m^{-1}\beta e_1=\begin{pmatrix}
+                &  &&& \textbf{0}\\
+                & &L_{m-1}^{-1}& & \vdots\\
+                &  & &&\textbf{0}\\
+                0 & \dots & 0 & -\lambda_m & 1
+            \end{pmatrix}
+            \begin{pmatrix}
+                \beta \\
+                \\
+                \\
+                \\
+                0
+            \end{pmatrix}
+            =\begin{pmatrix}
+                \\
+                \\
+                z_{m-1}
+                \\
+                \\
+                \zeta_m 
+            \end{pmatrix}\]
+            %Falsch Ende 
+            \[\begin{bmatrix}
+                &  &&& \\
+                & &L_{m-1}^{-1}& &\\
+                &  & &&\\
+                0 & \dots & 0 & -\lambda_m & 1
+            \end{bmatrix}\begin{bmatrix}
+                \\
+                \\
+                z_{m-1}
+                \\
+                \\
+                \zeta_m 
+            \end{bmatrix}=L_mz_m=\beta e_1 = \begin{bmatrix}
+                \beta \\
+                0\\
+                \vdots\\
+                0
+            \end{bmatrix}\]
+            Mit $\zeta_m=-\lambda_m \zeta_{m-1}$
+
+            \begin{align*}
+                \implies x_m&=x_o+p_mz_m\\
+                &= x_0 + \begin{bmatrix}
+                    p_{m-1} & p_m
+                \end{bmatrix}\begin{bmatrix}
+                    z_{m-1}\\
+                    \zeta_m
+                \end{bmatrix}\\
+                &=\underbrace{x_0+P_{m-1}z_{m-1}}_{x_{m-1}}+\zeta_mp_m\\
+                &=x_{m-1}+\zeta_mp_m
+            \end{align*}
+
+            \begin{algorithm}[H]% Vllt. auch 3.18?
+                \caption{Direkes Lanczos-Verfahren für LGS}\label{a3.26} 
+                \textbf{Input:} $A\in\R^{n\times n}$ symmetrisch, $b\in\R^n,x_0\in\R^n,m\in\N$\\
+                \textbf{Output:} $x_m\in x_0 +K_m(A,r_0), x_m\approx A^{-1}b$
+                \begin{algorithmic}
+                \State $r_0=b-Ax_0,\zeta_1=\beta=\left\Vert r_0 \right\Vert_2,v_1=\frac{r_0}{\beta_1}$
+                \State $\beta_1=0\in\R,\eta_0=1\in\R$
+                \State $p_0=0\in\R^n$
+                \For{$j=1,m$}
+                    \State $W_j=Av_j-\beta_jv_{j-1}$ \Comment Wie beim Lanczos
+                    \State $\alpha_j=\langle w_j,v_j \rangle$ \Comment Wie beim Lanczos
+                    \State $\frac{\beta_j}{\eta_{j-1}},\eta_j=\alpha_j-\lambda_j\beta_j$
+                    \State $\zeta_j=-\lambda_j\zeta_{j-1}$ \Comment: Für $j>1$
+                    \State $p_j=\frac{1}{2j}(v_j-\beta_jp_{j-1})$
+                    \State $x_j=x_{j-1}+\zeta_jp_{j-1}$
+                    \State Konvergenztest 
+                    \State $w_j=w_j-\alpha_jv_j$
+                    \State $\beta_{j+1}=\left\Vert w_j \right\Vert_2$, stop, falls $\beta_j=0$
+                    \State $v_{j+1}=\frac{1}{\beta_{j+1}}w_j$
+                \EndFor
+                \State Berechne $x_m$ wie oben, beginne von vorne mit $x_0=x_m$
+                \end{algorithmic}
+            \end{algorithm}
+
+            \begin{remark}\label{b3.27}
+                \begin{enumerate}
+                    \item Wir müssen nur $v_j,v_{j-1},w_j,p_j$ und $x_j$ aktiv im Speicher behalten
+                    Der Speicherbedarf und Rechenaufwand pro Iteration ist unabhängig von $j$.
+                    \item Algorithmus \ref{a3.24} und \ref{a3.26} sind matemathisch äquivalent, d.h.bei 
+                    exater Arithmetik erhalten wir die gleichen Iterierten. Wir müssen aber keine Vektoren vom Krylovraum speichern.
+                    \item Bisher haben wir nur eine schnelle Version des Verfahrens der vollständigen Orthogonalisierung (Algorithmus \ref{a3.16})
+                    für symmetrische Matrizen hergeleitet. Unser Verständnis der Fehleranalyse hat sich nicht verbessert.
+                \end{enumerate}
+            \end{remark}
+
+        \section{Das Verfahren der konjugierten Gradienten}
+    
+            Auch: Method of conjugate gradients / CG-Verfahren
+
+            \begin{lemma}\label{l3.28}
+                Seien $v_j,r_j=b-Ax_j$ und $p_j$, $j=0,1,\dots$ wie in dem Algorithmen \ref{a3.24} und \ref{a3.26} generiert.
+                Dann gilt:
+                \begin{enumerate}
+                    \item $r_j=\sigma_{j+1} v_{j+1}$ mit $\sigma_{j+1}\in\R$. D.h. insbesondere, dass
+                    die Residuuen $r_j$ orthogonal sind.
+                    \item Die $p_j$ sind $A$-orthogonal, d.h. es gilt \[\langle p_i,p_j \rangle_A=\langle Ap_i,p_j \rangle_2\]
+                    für $i\neq j$. 
+                \end{enumerate}
+            \end{lemma}
+
+            \begin{proof}
+                \textbf{1.} folgt aus Lemma \ref{l3.17}:
+                \[r_j=\underbrace{-h_{j+1,j}(e_j^ty_j)}_{\in\R}v_{j+1}\]
+
+                \textbf{2.}: Es reicht zu zeigen, dass $P_m^t A\underbrace{P_m}_{V_m R_m^{-1}}=R_m^{-t} \underbrace{V_m^t A V_m}_{=T_m=L_mR_m} R_m^{-1} = R_m^{-t}L_m$
+
+                $P_m^tA P_m$ ist symmetrisch und $R_m^{-t}L_m$ ist untere Dreiecksmatrix $\implies P_m^tA P_m$ is diagonal.
+
+             \end{proof}
+
+            \underline{\textbf{Idee:}} Vereinfache Algorithmus \ref{a3.26} zu einem Verfahren der Form
+            \begin{equation}\label{g3.9} % Finde 3.8
+                x_{j+1}=x_j+\tilde{\alpha}_j\tilde{p}_j, \tilde{p}_{j+1}=r_{j+1}+\tilde{\beta}_j\tilde{p}_j    
+            \end{equation}
+            benutze dazu de Eigenschaften aus Lemma \ref{l3.28}.
+            
+            Wie sieht $r_{j+1}$ aus?
+            \begin{align*}
+                r_{j+1}&=b-Ax_{j+1}\\   
+                &\stackrel{\ref{g3.9}}{=} b-Ax_j-\tilde{\alpha}_j A  \tilde{p}_j
+            \end{align*}
+
+            \begin{equation}\label{g3.10}
+                =r_j-\tilde{\alpha}_j A  \tilde{p}_j
+            \end{equation}
+
+            Außerdem \begin{align*} 
+                0=\langle r_{j+1},r_j \rangle_2 = \langle r_j-\tilde{\alpha}_j A  \tilde{p}_j,r_j \rangle_2 = \langle r_j,r_j \rangle_2-\tilde{\alpha}_j^2 \langle A\tilde{p}_j,r_j \rangle_2
+                \\ \implies \tilde{\alpha_j}=\frac{\langle r_j,r_j \rangle_2}{\langle A\tilde{p}_j,r_j \rangle_2}=\frac{\langle r_j,r_j \rangle}{\langle A\tilde{p}_j,\tilde{p}_j \rangle_2}
+            \end{align*}
+
+            \begin{align*}
+                0\stackrel{!}{=}\langle A\tilde{p}_j,r_j \rangle_2 = \langle Ar_{j+1},\tilde{p}_j \rangle_2 +\tilde{\beta}_j \langle A\tilde{p}_j, \tilde{p}_j\rangle_2\\
+                \implies \tilde{\beta}_j=-\frac{\langle r_{j+1},A\tilde{p}_j \rangle_2}{\langle A\tilde{p}_j,p_j \rangle_2}\\
+                \stackrel{(\ref{g3.10})}{=}\frac{1}{\alpha_j} \frac{\langle r_{j+1}, r_{j+1}\rangle}{\langle A\tilde{p}_j,\tilde{p}_j \rangle_2}=\frac{\langle r_{j+1},r_j \rangle_2}{\langle r_j,r_j \rangle_2}
+            \end{align*}
+                
+
+            \begin{algorithm}[H]% Vllt. auch 3.18?
+                \caption{CG-Verfahren}\label{a3.29} 
+                \textbf{Input:} $A\in\R^{n\times n}$ spd, $b\in\R^n,x_0\in\R^n$\\
+                \textbf{Output:} $x_m\approx A^{-1}b$
+                \begin{algorithmic}
+                \State $r_0=b-Ax_0,\tilde{p}_0=r_0$
+                \For{$j=1,m$}
+                    \State $\tilde{\alpha_j}=\frac{\langle r_j,r_j \rangle_2}{\langle A\tilde{p}_j,\tilde{p}_j \rangle_2}$
+                    \State $x_{j+1} = x_j +\tilde{\alpha}_j\tilde{p}_j$
+                    \State $r_{j+1}=r_j-\tilde{\alpha}_jA\tilde{p}_j$
+                    \State $\tilde{\beta}_j=\frac{\langle r_{j+1},r_j \rangle_2}{\langle r_j,r_j \rangle_2}$
+                    \State $\tilde{p}_{j+1}=r_{j+1}+\tilde{\beta}_j\tilde{p}_j$
+                    \State Konvergenztest
+                \EndFor
+                \end{algorithmic}
+            \end{algorithm}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 10 am 15.11.2022\xrfill[0.7ex]{1pt}
+            
+            \underline{\textbf{Nachtrag}}:
+            
+            Beim direken Lanczosverfahren: 
+            \[\rho_j=\frac{1}{2j}(v_j-\beta_jp_{j-1})\]
+            \[x_j=x_{j-1}+\zeta_jp_j\]
+            Es folgt mit $r_j=\sigma_{j+1}v_{j+1},\sigma_{j+1}\in\R$, dass die $r_j$ orthogonal sind.
+            Dann gilt \[\langle Ap_j,p_i \rangle_2=0, i\neq j\]
+            \[\implies x_{j+1}=x_j+\tilde{\alpha}_j\tilde{p}_j\] mit 
+            \[\tilde{p}_{j+1}=r_{j+1}+\tilde{\beta}_{j}\tilde{p}_j\]
+            wobei es von $\tilde{p}$ zu $p$ einen Indexshift gibt!
+
+            \begin{remark}\label{b3.30}
+                \begin{enumerate}
+                    \item Man kann per Induktion zeigen, dass die Iterierten $x_j$ (und damit die Residuen $r_j$)
+                    des CG-Verfahrens stimmen mit denen des direkten Lanczos-Verfahrens überein.
+                    Die $\tilde{p}_i$ sind vielfache der $p_{j+1}$. 
+                    \item Da CG-Verfahren muss nur $x_j,r_j\tilde{p}_j$ und (zur Beschleunigung) $A\tilde{p}_j$ speichern.
+                    \item Mit $\langle r_j,r_j \rangle_2=\left\Vert r_j \right\Vert_2^2$ wird $\left\Vert r_j \right\Vert_2$ bis auf Kosten einer Quadratwurzel berechnet.
+                \end{enumerate}
+            \end{remark}
+
+            \underline{\textbf{Was ist neu?}} $A$ spd $\implies \langle A\cdot,\cdot \rangle_2=\langle \cdot,\cdot \rangle_A$ ist ein Skalarprodukt und $\left\Vert \cdot \right\Vert_A = \sqrt{\langle \cdot,\cdot \rangle_A}$ ist eine Norm.
+
+            Die Iterierten von $CG$ und Lanczos sind gleich $\implies $ CG-Verfahren ist ein Projektionsverfahren.
+
+            Finde $x_j\in x_0+K_j(A,r_0)$ mit $r_j=b-Ax_j\perp R_j(A,r_0)$.
+
+            \begin{align*}
+                \implies 0 &= \langle r_j,y \rangle_2,y\in K_j(A,r_0)\\
+                &=\langle b-Ax_j,y \rangle_2 \\
+                &= (\star)
+            \end{align*}
+
+            \begin{align*}
+                (\star)&=\langle Ax-Ax_j,y \rangle_2\\
+                &= \langle A(x-x_j),y \rangle_2\\ 
+                &= \langle x-x_j,y \rangle_A
+            \end{align*}
+
+            \begin{equation*}
+                \implies x-x_j\perp_A K_j(A,r_0)
+            \end{equation*}
+
+
+            \begin{equation}\label{g3.11}
+                \stackrel{\text{Satz \ref{s1.9}}}{\implies} \left\Vert x-x_j \right\Vert_A=\min_{y\in K_j(A,r_0)} \left\Vert x-y \right\Vert_A
+            \end{equation}
+
+            \begin{remark}\label{b3.31}
+                (\ref{g3.11}) ist eine Aussage über den \underline{Fehler}, nicht das Residuum!
+            \end{remark}
+
+            \begin{lemma}\label{l3.32}
+                Sei $x_j$ die j-te Iterierte des CG-Verfahrens. Dann ist $x_j=x_0 +q_{j-1}(A)r_0$, wobei $q_{j-1}\in \Pi_{j-1}$ mit 
+                \begin{equation}
+                    \left\Vert \underbrace{(I-q_{j-1}(A)A)(x-x_0)}_{=x-x_j} \right\Vert_A=\min_{p\in\Pi_{j-1}} \left\Vert (I-p(A)A)(x-x_0) \right\Vert
+                \end{equation}
+            \end{lemma}
+
+            \begin{proof}
+                $x_j=x_0+K_j(A,r_0)\implies x_j=x_0+p_{j-1}(A)\underbrace{r_0}_{=b-Ax_0=A(x-x_0)},p_{j-1}\in\Pi_{j-1}$.
+                Mit (\ref{g3.11}) folgt die Behauptung.
+            \end{proof}
+
+            \begin{lemma}\label{l3.33}
+                Für die Iterierten $x_j$ des CG-Verfahrens gilt 
+                \begin{equation}\label{g3.12}
+                    \frac{\left\Vert x-x_j \right\Vert_A}{\left\Vert x-x_0 \right\Vert_A}\leq \min_{p\in\Pi_j,p(0)=1} \max_{\lambda \text{ Ew von } A} \left\vert p(\lambda) \right\vert
+                \end{equation}
+            \end{lemma}
+
+            \begin{proof}
+                Seien $(\lambda_i,w_i)_{i=1}^n$ die Eigenpaare von $A$. $x-x_0=\sum_{i=1}^n\xi_i w_i$.
+                \begin{align*}
+                    \left\Vert x-x_j \right\Vert_A^2 &\stackrel{\text{Lemma \ref{l3.32}}}{=}\min_{p\in\Pi_j, p(0)=1}\left\Vert p(A)(x-x_0) \right\Vert_A^2\\
+                    &=\left\Vert p(A)\sum_{i=1}^n \xi_i w_i\right\Vert_A^2\\
+                    &=\left\vert\sum_{i=1}^n \xi_i p(\lambda_i)w_i\right\Vert_A^2\\
+                    &= \langle A\sum_{i=1}^n \xi_ip(\lambda_i)w_i,\sum_{i=1}^n \xi_ip(\lambda_i)w_i \rangle_2\\
+                    &=\langle \sum_{i=1}^n \lambda_i\xi_ip(\lambda_i)w_i,\sum_{i=1}^n \xi_ip(\lambda_i)w_i \rangle_2\\
+                    &=\sum_{i=1}^n \lambda_i \xi_i^2 p(\lambda_i)^2\\ 
+                    &\leq \max_{i=1,\dots n} \left\vert p(\lambda_i) \right\vert \underbrace{\sum_{i=1}^n\lambda_i^2\xi_i^2}_{\left\Vert x-x_0 \right\Vert_A^2}
+                \end{align*}
+            
+            \end{proof}
+
+            \begin{corollary}\label{k3.34}
+                Falls $A$ spd $l$ verschiedene Eigenwerte hat, dann konvergiert das Verfahren in $l$ Schritten.
+            \end{corollary}
+
+            \begin{proof}
+                Wähle
+                \begin{equation*}
+                    p(x)=\left(1-\frac{x}{\lambda_1}\right)\cdot \dots \cdot \left(1-\frac{x}{\lambda_l}\right)
+                \end{equation*}
+                in Lemma \ref{l3.33}.
+            \end{proof}
+
+            \underline{\textbf{Ziel:}} Finde eine ähnliche Konvergenzaussage für Eigenwerte $0<\lambda_{\min}=\lambda_1\leq \lambda_2\leq \dots \leq \lambda_n=\lambda_{\max}<\infty$ von spd Matrizen.
+
+            \underline{\textbf{Idee:}} Beschränke die rechte Seite von (\ref{g3.12}) geeignet:
+            \begin{equation}\label{g3.13}
+                \min_{p\in\Pi_j,p(0)=1}\max_{\lambda \text{ Ew von }A} |p(\lambda)|\leq \min_{p\in\Pi_j,p(0)=1}\underbrace{\max_{\lambda\in [\lambda_{\min},\lambda_{\max}]} |p(\lambda)|}_{\left\Vert p \right\Vert_C([\lambda_{\min},\lambda_{\max}])}                 
+            \end{equation}
+
+            \underline{\textbf{Frage:}} Für welche oder welches Polynom ist dieser Ausdruck minimal?
+ 
+            \begin{definition}[Alma 2: Definition 15.10]\label{d3.35}
+                Für $n\in\N_0$ sind die \underline{\textbf{Tschebyscheff-Polynome}} definiert als 
+                \[T_n(x)=\cos(n\cos^{-1}(x))\in\Pi_n, x\in [-1,1]\]
+            \end{definition}
+
+            \begin{theorem}[Alma 2: Satz 15.12]\label{s3.36}
+                Unter allen Polynomen $p_n(x)=x^n+ \dots \in \Pi_n$ ist $\left\Vert p_n \right\Vert_{C([-1,1])}$ für $p_n=2^{1-n}T$ minimal.
+            \end{theorem}
+
+            \underline{\textbf{Idee:}} Modifiziere diese Aussage um (\ref{g3.13}) zu beschränken.
+
+            \begin{lemma}\label{l3.37}
+                Sei $[a,b]\subset \R$ und $t_0\in\R\setminus[a,b]$. Dann minimiert 
+                \begin{equation*}
+                    \hat{T}_n(t)=\frac{T_n(x(t))}{T_n(x(t_0))},x(t)=2\frac{t-a}{b-a}-1
+                \end{equation*}
+                den Ausdruck $\left\Vert \cdot \right\Vert_{C([a,b])}$ unter allen Polynomen $p\in\Pi_n$ mit $p(t_0)=1$
+            \end{lemma}
+
+            \begin{proof}
+                Übung.
+            \end{proof}
+
+            \begin{equation}\label{g3.14}  
+                \implies \min_{p\in\Pi_j,p(0)=1}\max_{\lambda \text{ Ew von }A} |p(\lambda)| \stackrel{(\ref{g3.13}), \text{Lemma \ref{l3.37}}}{\leq} \left\Vert \hat{T}_j \right\Vert_{C([\lambda_{\min},\lambda_{\max}])}=\frac{1}{\left\vert T_j(x(0)) \right\vert}
+            \end{equation}
+
+            \begin{theorem}\label{s3.38}
+                Für den Approximationsfehler $x-x_0$ in der j-ten Iteration des CJ-Verfahrens gilt
+                \begin{equation*}
+                    \left\Vert x-x_j \right\Vert_A\leq 2\left(\frac{\sqrt(\cond_2(A))-1}{\sqrt{\cond_2(A)}+1}\right)^j\left\Vert x-x_0 \right\Vert_A
+                \end{equation*}
+            \end{theorem}
+
+            \begin{proof}
+                In (\ref{g3.14}) ist 
+                \begin{align*}
+                    x_0&=2\frac{0-\lambda_{\min}}{\lambda_{\max}-\lambda_{\min}}-1\\
+                    &=-\frac{\lambda_{\max}+\lambda_{\min}}{\lambda_{\max}-\lambda_{\min}}\\
+                    &=-\frac{\cond_2(A)+1}{\cond_2(A)-1}
+                \end{align*}
+
+                Außerdem: 
+                \begin{align*}
+                    T_j(x(0))&=T_j\left(-\frac{\cond_2(A)+1}{\cond_2(A)-1}\right)\\
+                    &\stackrel{\text{Übung}}{=}\frac{1}{2}\left(\left(\frac{\sqrt(\cond_2(A))+1}{\sqrt{\cond_2(A)}-1}\right)^j+\left(\frac{\sqrt(\cond_2(A))-1}{\sqrt{\cond_2(A)}+1}\right)^j\right)\\
+                    &\geq \frac{1}{2}\left(\frac{\sqrt(\cond_2(A))+1}{\sqrt{\cond_2(A)}-1}\right)^j
+                \end{align*}
+
+                Dann folgt mit (\ref{g3.14}) die Behauptung.
+
+            \end{proof}
+
+            \begin{remark}\label{b3.39}
+                \begin{enumerate}
+                    \item Das Verfahren des steilsten Absties hat eine ähnliche Abschätzung aber mit $\cond_2(A)$ statt $\sqrt{\cond_2(A)}$.
+                    \item Für spd Matrizen führen die Algorithmen \ref{a3.16}, \ref{a3.24}, \ref{a3.26} auf die gleiche Abschätzung, sind aber teurer. Das 
+                    CG-Verfahren ist das wichtigste aller Verfahren (auch in der Prüfung!) zum Lösen von LGS. 
+                \end{enumerate}
+            \end{remark}
+
+            $$\underbrace{M}_{\approx A^{-1}}Ax=Mb$$ % anderer Ansatz, bei schlechter Kondition
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 11 am 17.11.2022\xrfill[0.7ex]{1pt}
+            
+    \chapter{Lineare Eigenwertprobleme}
+
+        \section{Problemstellung und Beispiele}
+
+            \begin{definition}\label{d4.1}
+                Gegeben sei eine Matrix $A\in\C^{n\times n}$ mit $n\in\N$. $(\lambda,x)\in\C\times \C^n\setminus{0}$ heißt 
+                \textbf{Eigenpaar} (EP) von $A$, falls 
+                \begin{equation}\label{g4.1}
+                    Ax=\lambda x
+                \end{equation}
+                $\lambda$ heißt Eignewert (Ew) und $x$ Eigenvektor (EV). (\ref{g4.1}) heißt \textbf{spezielles Matrixeigenwertproblem}.
+            \end{definition}
+
+            \begin{remark}\label{b4.2}
+                \begin{enumerate}
+                    \item Gegeben $A,B\in\C^{n\times n}$ heißt 
+                        \begin{equation}\label{g4.2}
+                            Ax=\lambda Bx
+                        \end{equation}
+                        das \textbf{allgemeine Matrixeigenwetrproblem}. Falls $B$ invertierbar ist, dann ist (\ref{g4.2}) äquivalent zu (\ref{g4.1}), d.h. 
+                        \[B^{-1}Ax=\lambda x.\]
+                        Falls $B$ eine Cholesky-Zerlegung hat, ist (\ref{g4.2}) äquivalent zu (\ref{g4.1}), d.h.
+                        \[L^{-1}A x=\lambda \underbrace{L^tx}_{\coloneqq y}\]
+                        \[L^{-1}AL^{-t}y=\lambda y\]
+                    \item Wir betrachten nur spezielle Matrixeigenwertprobleme und sprechen nur von \textbf{Eigenwertproblemen}. Es gibt 
+                        aber auch Algorithmen, doe (\ref{g4.2}) in der allgemeinsten Form lösen.
+                    \item Ist $A=A^t\in\R^{n\times n}$ in (\ref{g4.1}) sprechen wir vom \textbf{symmetrischen Eigenwertproblem}. 
+                \end{enumerate}
+            \end{remark}
+
+            \begin{example}\label{b4.4}
+                Viele Räuber-Beute Modelle in Biologie, Epidemiologie und Wirtschaft können als gewöhnliche Differentialgleichungen geschrieben werden
+                \begin{equation*}
+                    y'(t)=Ay(t), y(0)=y_0\in\R^n,A\in\R^{n\times n}
+                \end{equation*}
+                geschrieben werden. 
+
+                Sei $A=V\Lambda V^*$ eine Diagonalform von $A$ mit $\Lambda=\text{diag}(\lambda_1,\dots,\lambda_n)$. Dann ist 
+                \begin{equation*}
+                    y(t)=e^{At}y_0,y_0=Ve^{\Lambda t}V^*y_0=V\begin{bmatrix}
+                        e^{\lambda_1t} & &\\
+                        & \ddots & \\ 
+                        && e^{\lambda_nt}
+                    \end{bmatrix}
+                \end{equation*}
+
+                Mit \begin{equation*}
+                    e^{At}=\sum_{i=0}^\infty \frac{(At)^i}{i!}=V\sum_{i=0}^\infty \frac{(\Lambda t)^i}{i!}V^*
+                \end{equation*}
+
+            \end{example}
+
+            \begin{example}\label{b4.5}
+                Gegeben einer Reihe von Messewerten  oder Datenpunkten $x_i\in\R^n,i=1,\dots m$, welche in einer Datenmatrix angeordnet sind:
+                \begin{equation*}
+                    X=[x_1\vert\dots\vert x_n]\in\R^{n\times n}
+                \end{equation*}
+                Der Einfachheit halber sei \[\frac{1}{m}\sum_{i=1}^nx_i=0\]
+                Die Kovarianzmatrix 
+                \[C=\frac{1}{m}XX^t=\frac{1}{m}\sum_{i=1}^n x_ix_i^t\]
+                Seien $(\lambda_i,v_i),i=1,\dots n$ die EP von $C$, mit $\lambda_1\geq \lambda_2\dots\geq \lambda_n\geq 0$ 
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=0.25\textwidth]{Bild012}
+                    \caption{\(U\) und \(U^\perp\)}
+                \end{figure}
+                Dann geben die Eigenwerte $\lambda_i$ die Varianzen der $x_i$ in Richtung $v_i$ an. D.h. die $x_i$ haben in Richtung 
+                $v_i$ die größte Varianz, etc.
+            \end{example}
+
+            \begin{example}\label{b4.6}
+                
+                Das Schwingen einer Trommel der Form $\Omega\subset \R^2$, offen, mit Frequenz $\lambda$ erfüllt
+                \begin{align*}
+                    \Delta u(x)&=\lambda u(x), & x\in\Omega \\ 
+                    u(x)&=0, & x\in\delta\Omega 
+                \end{align*}
+                Mit einem ähnlichen Vorgehen wie in Kapitel 3.1 erhalten wir ein Matrixeigenwertproblem 
+                \[
+                    Ax=\lambda x    
+                \]
+                Ein Beispiel für $A$ ist Beispiel \ref*{b3.1}. $A$ ist immer spd. Alternative Diskretisierungsmethoden 
+                füren auf 
+                \[
+                    Ax=\lambda Bx    
+                \]
+                mit $A,B$ spd, sehr groß und dünn besetzt.
+
+            \end{example}
+
+            \begin{remark}\label{b4.7}
+                Sei $A\in\C^{n\times n}$.
+                \begin{enumerate}
+                    \item Die EW von A sind die Nullstellen de charakteristischen Polynoms
+                        \[p_A(\lambda) = \det(A-\lambda I)\]
+                        \[p_A\in\Pi_n\implies p_A\text{ hat } n \text{ komplexe Nullstellen}\]
+                        $\implies A $ hat $n$ (möglicherweise gleiche)  Eigenwerte.
+                    \item Für $A$ hermitisch $A=A^*$ sind die EW reel. Die zugehörigen EV können als ONB genutz werden. Falls $A$ zusätzlich reell ist, können die EV reell
+                        und orthogonal gewählt werden.
+                    \item $A\in\R^{n\times n},Ax=\lambda x$ ($\lambda\in \C$ möglich), so folgt 
+                        \[A\overline{x}=\overline{Ax}=\overline{\lambda x} = \overline{\lambda}\overline{x}\]
+                        $\implies (\overline{\lambda},\overline{x})$ ist auch ein EP.
+                    \item Die EW zu einem Gegeben EW sind \underline{nicht} eindeutig:
+                        \[Ax=\lambda x \implies Ay=\lambda y,y=\alpha x,\alpha\in\C\setminus\{0\}\]
+                        \begin{align*}
+                            Ax_1=\lambda x_1 \\
+                            Ax_2=\lambda x_2\\
+                            \implies A\alpha x_1 +\beta x_2 = \lambda(\alpha x_1 +\beta x_2)
+                        \end{align*}
+                    \item hnliche Matrizen, d.h. Matrizen der Form $B=CAC^{-1}$, $C$ regulär, haben die gleichen EW.
+                \end{enumerate}
+            \end{remark}
+
+            \underline{\textbf{Frage:}} Was können wir sonst noch sagen? 
+        
+        \section{Gerschgorin-Kreise (Abschätzungen für EW)}
+
+            Sei $(\lambda,x)$ ein EP von $A\in\C^{n\times n}$. Betrachte die $l$te Zeile von $Ax=\lambda x$:
+
+            \begin{equation}\label{g4.3}
+                \lambda x_l = \sum_{j=1}^n a_{l_j}x_j=a_{ll}x_l+\sum_{j=1,j \neq l}^n a_{l_j}x_j
+            \end{equation}
+
+
+            Sei $i$ so, dass $\vert x_i\vert =\max_{j=1,\dots, n}|x_j|>0$.
+
+            Dann gilt: 
+            \begin{align*}
+                \left\vert \lambda -a_{ii} \right\vert \left\vert x_i \right\vert &= \left\vert (\lambda-a_{ii})x_i \right\vert\\
+                &\stackrel{(\ref{g4.3})}{=}\left\vert \sum_{j=1,j\neq i} a_{ij}x_j \right\vert\\
+                &\leq \sum_{j=1,j\neq i}^n \left\vert a_{ij} \right\vert \left\vert x_i \right\vert \\ 
+                &\leq \vert x_i \vert \sum_{j=1,j\neq i}^n \left\vert a_{ij} \right\vert \coloneqq r_i
+            \end{align*}
+
+            \[\implies \left\Vert \lambda a_{ii} \leq \sum_{j=1,j\neq i}^n \vert a_{ij}\vert = r_i\right\Vert\]
+
+            $\implies$ $\lambda$ liebt in einem Kres mit Radius $r_i$.
+
+            \underline{\textbf{Aber:}} $x$ ist unbekannt $\implies$ $i$ ist unbekannt 
+
+            $\implies \lambda$ liebt in der Vereinigun aller solche Kreise
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 12 am 22.11.2022\xrfill[0.7ex]{1pt}
+            
 
 \end{document}

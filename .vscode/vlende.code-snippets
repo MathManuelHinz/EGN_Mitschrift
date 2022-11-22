@@ -36,5 +36,25 @@
 	 "title=$1]",
 	 "$2",
     "\\end{tcolorbox}","$0"],
+	},
+	"Algorithmus": {
+	 "prefix": "algo",
+	 "body": ["\\begin{algorithm}[H]",
+	 "         \\caption{$1}\\label{$2}",
+	 "      \\textbf{Input:} $3",
+	 "      \\textbf{Output:} $4",
+	 "      \\begin{algorithmic}",
+	 "         $5",
+	 "      \\end{algorithmic}",
+ 	"   \\end{algorithm}","$0"],
+	},
+	"Bild": {
+	 "prefix": "bild",
+	 "body": ["\\begin{figure}[H]",
+	 "   \\centering",
+	 "   \\includegraphics[width=0.25\textwidth]{$1}",
+	 "   \\caption{\\(U\\) und \\(U^\\perp\\)}",
+ 	"\\end{figure}",
+	"$0"],
 	}
 }
