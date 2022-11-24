@@ -2248,7 +2248,7 @@
                 \begin{figure}[H]
                     \centering
                     \includegraphics[width=0.25\textwidth]{Bild012}
-                    \caption{\(U\) und \(U^\perp\)}
+                    \caption{PCA Beispiel}
                 \end{figure}
                 Dann geben die Eigenwerte $\lambda_i$ die Varianzen der $x_i$ in Richtung $v_i$ an. D.h. die $x_i$ haben in Richtung 
                 $v_i$ die größte Varianz, etc.
@@ -2318,7 +2318,7 @@
                 &\leq \vert x_i \vert \sum_{j=1,j\neq i}^n \left\vert a_{ij} \right\vert \coloneqq r_i
             \end{align*}
 
-            \[\implies \left\Vert \lambda a_{ii} \leq \sum_{j=1,j\neq i}^n \vert a_{ij}\vert = r_i\right\Vert\]
+            \[\implies \left\vert \lambda a_{ii} \right\vert\leq \sum_{j=1,j\neq i}^n \vert a_{ij}\vert= r_i\] % TODO: Fix
 
             $\implies$ $\lambda$ liebt in einem Kres mit Radius $r_i$.
 
@@ -2328,6 +2328,163 @@
 
             \noindent
             \xrfill[0.7ex]{1pt}Ende von Vorlesung 12 am 22.11.2022\xrfill[0.7ex]{1pt}
+        
+            \begin{theorem}\label{s4.7}[Satz von Gerschgorin]
+                Alle Eigenwerte einer Matrix $A\in\C^{n\times n}$ liegen in 
+                \[\bigcup_{i=1}^n K_i\] mit 
+                \[K_i=\{z\in\C: \left\vert z-a_{ii} \right\vert \leq r_i\},r_i=\sum_{j=1,j\neq i}^n \left\vert a_{ij} \right\vert, i=1,\dots,n\]
+            \end{theorem}
+
+            \begin{proof}
+                Oben.
+            \end{proof}
+
+            %Bild
+
+            \begin{remark}\label{b4.8}
+                \begin{enumerate}
+                    \item Bilden $k$ Geschkorin-Kreise eine von den restlichen Kreisen disjunkte 
+                    Punktmenge, so liegen in dieser Punktmenge genau $k$ EW.
+                    \item Ist $A\in\R^{n\times n}$, dann haben $A$ und $A^t$ die gleichen Eigenwerte. 
+                    $\implies$ EW von A liegen im Durchschnitt der jeweiligen Kreise.
+                    \item 
+                \end{enumerate}
+            \end{remark}
+
+        \section{Kondition des Eigenwertproblems}
+
+            \underline{\textbf{Wiederholung:}} Die Kondition deschreibt, wie sich Änderungen in den
+            Eingabedaten auf die Werte der Ausgabe auswirken. 
+            \[
+                \kappa_{\text{abs}}=\left\vert f'(x) \right\vert = \frac{\Delta y}{\Delta x}    
+            \]
+
+            \underline{\textbf{Frage:}} Ist das Eigenwertproblem gut- oder Schlechtkonditioniert?
+
+            \begin{tcolorbox}[enhanced,breakable,
+            title=Kondition des Problems]
+            In Matrix \& Computations ist das ausführlich beschrieben. 
+            \end{tcolorbox}
+            
+
+            \begin{example}\label{b4.9}
+                Sei $\begin{bmatrix}
+                    0 &1\\ 0&0
+                \end{bmatrix}\implies $ EW sind $\lambda_{1/2}=0$.
+
+                Sei $\tilde{A}=\begin{bmatrix}
+                    0 & 1 \\ \delta & 0
+                \end{bmatrix},\delta>0 \implies $ EW sind $\lambda_{1/2}=\pm\sqrt{\delta}$.
+
+                \begin{equation*}
+                    \kappa_{\text{abs}}=\frac{\left\vert 0-\pm\sqrt{\delta} \right\vert}{\left\Vert A-\tilde{A} \right\Vert_2} = \frac{\left\vert \sqrt{\delta} \right\vert}{\left\vert \delta \right\vert} \stackrel{\delta\to 0}{\to}\infty
+                \end{equation*}
+
+                Daher ist das Eigenwertproblem in diesem Fall schlechtkonditioniert.
+
+            \end{example}
+
+            \begin{remark}\label{b4.10}
+                Allgemeiner kann man zeigen, dass (DAH Satz 5.2) die absolute Kondition eines einfachen Eigenwerts 
+                $\lambda$ von $A\in\C^{n\times n}$ bzgl. $\left\Vert \cdot \right\Vert_2$ gegeben ist durch 
+                \[\kappa_{\text{abs}}=\frac{\left\Vert x \right\Vert\left\Vert y \right\Vert}{\langle x,y \rangle_2} = \frac{1}{\left\vert \cos(\angle(x,y)) \right\vert}\]
+                wo bei $Ax=\lambda x$ (Rechtseigenvektor) und $A^* y = \bar{\lambda} y$ (Linkseigenvektor).
+                D.h. einfache Eigenwerte hermitischer Matrizen sind gutkonditioniert, da $x$ parallel zu $y$ ist. 
+                
+                Bei mehrfachen oder nahe zusammenliegenden EW ist die Berechnung einzelner EV-Suche schlechtkonditioniert.
+                Die Berechnung einer ONB des zugehörigen Eingenpaars ist aber gutkonditioniert.
+            \end{remark}
+           
+            \begin{remark}\label{b4.11}
+                Die kanonische Idee die Eingenwerte als Nullstellen des charakteristischen Polynoms zu berechnen ist schlechtkonditioniert. Tatsächlich wird die Nullstellenberechnung in der Praxis
+                als Matrixeigenwertproblem gelöst.
+            \end{remark}
+
+            \begin{tcolorbox}[enhanced,breakable,
+                title=Berechnung der EW]
+                    $(x-1)(x-2)\cdot \dots \cdot (x-20)$ ist ein gutes Beipsiel, warum das berechnen von Nst (hier Eigenwerten) schwer ist, weil die Koeffizienten sehr groß werden.
+                    Außerdem ist das Berechnen des Polynoms, durch Berechnung der Determinante, teuer.
+            \end{tcolorbox}
+
+        \section{Vektoriteration (Potenzmethode, etc)}
+
+            \underline{\textbf{Idee:}} Multipliziere die Matrix mit einem Vektor.
+
+            \underline{\textbf{Iterationsfolge:}} Gegeben $A\in\C^{n\times n},x_0\in\C^n$, setze \[x_{k+1}=Ax_k\]
+
+            \begin{theorem}\label{s4.12}
+                Sei $A\in\R^{n\times n},x\in\R^n$ mit $A=A^t$ symmetrisch, mit einfachem betragsmäßig 
+                größtem EW $\lambda_1$, d.h. 
+                \[\vert \lambda_1\vert > \left\vert \lambda_2 \right\vert \geq \dots \geq \left\vert \lambda_n \right\vert\geq 0.\]
+                Sei $x_0^tu_1\neq 0,u_1$ EV zu $\lambda_1$. Dann konvergiert 
+                \begin{equation*}
+                    y_k=\frac{x_k}{\left\Vert x_k \right\Vert}, x_{k+1}=Ax_k,k=0,1,\dots 
+                \end{equation*}
+
+                zu $u_1$. Die Konvergenz ist alternierend, falls $\lambda_1<0$.
+
+                Außerdem gilt 
+                \begin{equation}\label{g4.4}
+                    y_k^t Ay_k\stackrel{k\to\infty}{\to}\lambda_1
+                \end{equation}
+
+            \end{theorem}
+
+            \begin{proof}
+                Sei $u_1,\dots,u_n$ eine ONB von $\R^n$ aus EV von $A$, mit $u_i$ EV von $\lambda_i$. 
+                Sei
+
+                \begin{equation}\label{g4.5}
+                    x_0=\sum_{i=1}^n\alpha_i u_i
+                \end{equation}
+                \begin{equation*}
+                    \implies x_k=A^kx_0\stackrel{\ref{g4.5}}{=}\sum_{i=1}^n\alpha_i A^k u_i = (\star)
+                \end{equation*}
+
+                \begin{align*}
+                    (\star) &= \sum_{i=1}^n\alpha_i \lambda_i^k u_i\\
+                    &= a_1\lambda_1^ku_1 + \sum_{i=2}^n\alpha_i \lambda_i^k u_i\\
+                    &= a_1\lambda_1^k \underbrace{\left(u_1+\sum_{i=2}^n\frac{\alpha_i}{\alpha_1} \frac{\lambda_i^k}{\lambda_1^k} u_i\right)}_{=z_k\stackrel{k\to\infty}{\to} u_1}
+                \end{align*}
+
+                \begin{align*}
+                    y_k&=\frac{x_k}{\left\Vert x_k \right\Vert}\\
+                    &=\frac{\alpha_1\lambda_1^kz_k}{\left\Vert \alpha_1\lambda_1^kz_k \right\Vert}
+                    &=\begin{cases}
+                        =\pm \frac{z_k}{\left\Vert z_k \right\Vert_2}\to \pm u_1 & \lambda_1 >0 \\ 
+                        =\pm(-1)^k\frac{z_k}{\left\Vert z_k \right\Vert_2}\to \pm u_1 & \lambda < 0
+                    \end{cases}
+                \end{align*}
+
+                \underline{\textbf{z.z.:}} (\ref{g4.4})
+                \begin{align*}
+                    \left\vert y_k^tAy_k-\lambda_1 \right\vert &= \left\vert y_k^tAy_k-\lambda_1y_k^ty_k \right\vert\\ 
+                    &= \left\vert \frac{x_k^t(A-\lambda_1I)x_k}{x_k^t x_k} \right\vert \\
+                    &= \left\vert \frac{x_0^tA^{2k}(A-\lambda_1 I)x_0}{x_0^t A^{2k}x_0} \right\vert\\ 
+                    &\stackrel{\ref{g4.5}}{=}\left\vert \frac{\sum_{i=1}^n \alpha_i^2\lambda_i^{2n}(\lambda_i-\lambda_1)}{\sum_{i=1}^n\alpha_i^2\lambda_i^{2k}} \right\vert = (\star \star)
+                \end{align*}
+
+                \begin{align*}
+                    (\star\star) = \max_{i=2,\dots,n}\left\vert \lambda_i-\lambda_1 \right\vert \underbrace{\left\vert \frac{\sum_{i=2}^n\alpha_i^2\lambda_i^{2k}}{\alpha_1^2\lambda_1^{2k}} \right\vert}_{=\frac{1}{\alpha_1^2}\sum_{i=2}^n \alpha_i^2 \left(\frac{\lambda_i}{\lambda_1}\right)^{2k}} %Todo}
+                \end{align*}
+
+            \end{proof}
+
+            \begin{remark}\label{4.13}
+                \begin{enumerate}
+                    \item Um Overflow/Underflow zu vermeiden, muss die Iteration angepasst werden:
+                        \[y_0=\frac{x_0}{\left\Vert x_0 \right\Vert_2},y_1=Ay_k,y_k=\frac{x_k}{\left\Vert x_k \right\Vert_2}, k=0,1,\dots \]
+                        Die Eigenschaften bleiben unverändert.
+                    \item Der Satz \ref{s4.12} gilt aich für mehrfache EW $\lambda_1$.
+                    \item In der Praxis ist $x_0^tu_1\neq 0$ wegen Rundungsfehlern nicht von Bedeutung, muss also nicht übeprüft werden.
+                    \item Die Konvergenzgeschwindigkeit hängt von $\left\vert \frac{\lambda_2}{\lambda_1} \right\vert$ ab. Falls $ \vert \lambda_1 \vert \approx \vert \lambda_2 \vert $ konvergietr das Verfahren sehr langsam.    
+                \end{enumerate}
+            \end{remark}
+
+
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 13 am 24.11.2022\xrfill[0.7ex]{1pt}
             
 
 \end{document}
