@@ -54,6 +54,8 @@
 \def\R{\mathbb{R}}
 \def\N{\mathbb{N}}
 \def\Z{\mathbb{Z}}
+\def\E{\mathbb{E}}
+\def\V{\mathbb{V}}
 \def\rang{\text{rang}}
 \def\cond{\text{cond}}
 \def\eps{\text{eps}}
@@ -2485,6 +2487,1799 @@
 
             \noindent
             \xrfill[0.7ex]{1pt}Ende von Vorlesung 13 am 24.11.2022\xrfill[0.7ex]{1pt}
+            
+            \begin{algorithm}[H]
+                     \caption{Vektoriteration}\label{a4.14}
+                  \textbf{Input:} $A\in\R{n\times n,x_0\in\R^n}$ 
+                  \textbf{Output:} $\lambda_1^{(1)}\approx \lambda_1,y_k\approx \pm u_1$
+                  \begin{algorithmic}
+                    \State $y_0=\frac{x_0}{\left\Vert x_0 \right\Vert_2}$
+                    \For{$j=0,1,2,\dots$}
+                        \State $x_{k+1}=Ay_k$
+                        \State $y_{k+1}=\frac{x_k}{\left\Vert x_k \right\Vert_2}$
+                        \State $\lambda_{1}^{(k+1)}=y_{k+1} ^t Ay_{k+1}$
+                        \State Kovergenztest
+                    \EndFor
+                  \end{algorithmic}
+               \end{algorithm}
+                        
+            \underline{\textbf{Frage:}} Wie können wir beliebige EW und EV berechnen?
+
+            \underline{\textbf{Idee:}} Verwende Nährung $\tilde\lambda$ an $\lambda_i$, welche 
+            näher an $\lambda_i$ als allen anderen EW ist.
+
+            $\rightsquigarrow$ die Vektoriteration auf 
+            \[\left(A-\tilde\lambda\right)^{-1}\]
+            an (shift \& invert). $\implies \left(A-\tilde\lambda\right)^{-1}$ hat $(\lambda_k-\tilde\lambda)^{-1}, j=1,\dots n$
+            als EW. $\implies $ gößter Eigenwert von $\left(A-\tilde\lambda\right)^{-1}$ ist $(\lambda_i-\tilde\lambda)^{-1}$. Daraus bekommen wir $\lambda_i$.
+
+            Dieses Verfahren heißt \textbf{inverse Vektoriteration}.
+
+            \underline{\textbf{Aber:}} Wir brauchen $\tilde\lambda$ und müssen in jeder Iteration ein lineares Gleichungsystem lösen.
+
+
+        \section{Das QR-Verfahren}
+
+            \underline{\textbf{Ziel:}} Algorithmus zum Berechnen aller EW einer Matrix $A\in\C^{n\times n}$.
+
+            \underline{\textbf{Idee:}} Formuliere Iterationsvorschrift
+            \begin{equation}\label{g4.6} % Alles in eins
+            A_0=A
+            \end{equation}
+            Berechne $QR$ Zerlegung von $A_k-\mu_kI=Q_kR_k$ für $\mu_k\in \C$
+
+            Setze $A_{k+1}=R_kQ_k+\mu_kI$.
+
+            \begin{lemma}\label{l4.15}
+                Seien $\mu_k,A_k,Q_k,R_k$ wie in (\ref{g4.6}). Dann gilt 
+                \begin{enumerate}
+                    \item $A_{k+1}=Q^*_kA_kQ_k$
+                    \item $A_{k+1}=(Q_0Q_1\dots Q_k)^*A(Q_0Q_1\dots Q_k)$
+                    \item \[\prod_{j=0}^k (A-\mu_k I) = \underbrace{(Q_0Q_1\dots Q_k)}_{\underline{Q_k}}\underbrace{(R_{k}R_{k-1}\dots R_0)}_{\underline{R_k}}\]
+                \end{enumerate}
+            \end{lemma}
+
+            \begin{proof}
+            Übung :)
+            \end{proof}
+
+            \begin{remark}\label{b4.16}
+                Lemma \ref{l4.15} sagt, dass alle $A_k$ die gleichen EW haben. 
+            \end{remark}
+
+            Wie kommen wir auf (\ref{g4.6})? Betrachte $\mu_k=0$
+
+            \underline{\textbf{Beobachtung 1}} 
+
+            \begin{align*}
+                \underbrace{A^{k+1}e_1}_{\text{Vektoriteration!}}&\stackrel{\text{Lemma }\ref{l4.15}}{=} \underline{Q_k}\underline{R_k}e_1\\
+                &=\begin{bmatrix}
+                    &&
+                    q_1^{(k)} & \dots& q_n^{(k)}
+                    &&
+                \end{bmatrix}
+                \begin{bmatrix}
+                    r_{11}^{(k)} &  \dots r_{1n}^{(k)}\\
+                    &\ddots  &\vdots \\
+                    0 && r_{nn}^{(k)}
+                \end{bmatrix}
+                e_1\\
+                &=r_{11}^{(k)}q_1^{(k)}
+            \end{align*}
+
+            $\implies q_1^{(k)}$ ist approximativer Eigenvekor zum betragsmäßig größten EW $\lambda_1$.
+
+            $$\implies A_{k+1}e_1\stackrel{\text{Lemma }\ref{l4.15}}{=} \underline{Q_k^*}\underbrace{A\underbrace{\underline{Q_k}e_1}_{q_1^{(k)}}}_{\approx \lambda_1 q_1^{(k)}}$$
+
+            \[\approx \lambda_1\underline{Q_k}^*q_1^{(k)}=\lambda_1e_1\]
+
+            \[\implies A_{k+1}=\begin{bmatrix}
+                \lambda_1 & \star & \dots & \star\\
+                0& \star & \dots & \star\\
+                \vdots & \vdots &&\vdots \\
+                0 &  \star& \dots & \star
+            \end{bmatrix}\]
+
+            \underline{\textbf{Beobachtung 2}}
+
+            \begin{align*}
+                \left(q_n^{(k)}\right)^*&=e_n^t \underline{Q_k}^*\\
+                &=\underbrace{e^t_n\underline{R_k}}_{r_nn^{(k)}e_n^t}A^{-(k+1)}=r_{nn}^{(k)}e_n^t A^{-(k+1)}\\
+            \end{align*}
+
+            $q_n^{(k)}$ ist ein appriximativer Eigenvektor zum betragsmäßig kleinsten EW $\lambda_n$ von $A$.
+
+            \begin{align*}
+                \implies e_n^t A_{k+1}&\stackrel{\text{Lemma }\ref{l4.15}}{=}\underbrace{e_n^t\underline{Q_k}^*}_{= \left(q_n^{(k)}\right)^*}A\underline{Q_k}\\
+                &\approx \lambda_n  \left(q_n^{(k)}\right)^* \underline{Q_k}\\
+                &=\lambda_n e_n^t\\
+            \end{align*}
+
+            \begin{equation*}
+                A_{k+1}=
+                    \begin{bmatrix}
+                        \lambda_1 & \star & \dots & \star\\
+                        0& \star & \dots & \star\\
+                        \vdots & \vdots &&\vdots \\
+                        0 &  \star& \dots & \star\\
+                        0 & 0& \dots & \lambda_n
+                    \end{bmatrix}
+            \end{equation*}
+
+            \begin{theorem}\label{s4.17}
+                Sei $A\in\C^{n\times n}$ mit paarweise verschiedenen Eigenwerten $\left\vert \lambda_1 \right\vert>\left\vert \lambda_2 \right\vert>\dots >\left\vert \lambda_n \right\vert>0$.
+                
+                $\Lambda=\text{diag}(\lambda_1,\dots,\lambda_n)$ und $X=\begin{bmatrix}
+                    &&\\
+                    x_1 & \dots & x_n\\
+                    &&\\
+                \end{bmatrix}$
+
+                die zugehörige EV Matrix $(A=X \Lambda X^{-1})$. Existiert die LR-Zerlegung $X^{-1}=LR$, dann sind die Matrizen
+                $A_k$ aus (\ref{g4.6}) mit $\mu_k=0$ asymptoisch obere Dreiecksmatrizen. Außerdem konvergiert $\text{diag}(\text{diag}(A_k))$ mindestens linear gegen $\Lambda$
+
+            \end{theorem}
+
+            \underline{\textbf{Idee:}} Leite zwei erschiedene $QR$-Zerlegungen von $A^k$ mit verschiedenen Eigenschaften 
+            her. 
+
+            \underline{\textbf{$QR$-Zerlegung 1:}} Lemma \ref{l4.15}.3 $\implies A^k=\underline{Q_{k-1}}\underline{R_{k-1}}$.
+
+            \underline{\textbf{$QR$-Zerlegung 2:}} 
+            \begin{align*}
+                A^k&=X\Lambda^k\underbrace{X^{-1}}_{LR}\\
+                &=X\Lambda^k LR\\
+                &=\underbrace{(X\Lambda^k L\Lambda^{-k})}_{X_k\text{ mit QR-Zerlegung } X_k=P_kU_k}(\Lambda^k R)\\
+                &=\underbrace{P_k}_{\underline{P_k}}\underbrace{(U_k\Lambda^kR)}_{\underline{U_k}}
+            \end{align*}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 14 am 29.11.2022\xrfill[0.7ex]{1pt}
+
+            \begin{proof}
+
+                \underline{\textbf{Bemerke:}} 
+                \begin{align*}
+                    \Lambda^k L \Lambda^{-k}&=\begin{bmatrix}
+                        \lambda_1^k & & \\
+                        & \ddots & \\
+                        &&\lambda_n^k
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                            1 & & \\
+                            \star& \ddots & \\
+                            \star &\star &1
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                        \lambda_1^{-k} & & \\
+                        & \ddots & \\
+                        &&\lambda_n^{-k}
+                    \end{bmatrix}\\
+                    &\implies \left(\Lambda^k L \Lambda^{-k}\right)_{ij}=\begin{cases}
+                        0 & j>1\\
+                        1 & i=j\\
+                        I_{ij}\left(\frac{\lambda_i}{\lambda_j}\right)^k & i>j
+                    \end{cases}\\
+                    &\implies X_k=X(I+E_k), \left\Vert E_k \right\Vert_2=O(q^k) 
+                \end{align*}
+
+                $q\in(0,1)$ hängt von $\frac{\lambda_i}{\lambda_j},i>j$ ab.
+
+                Eindeutigkeit der QR-Zerlegung bis auf unitäre Skalierungen (Übung)
+
+                \begin{align*}
+                    \implies \underline{Q_{k-1}}=\underline{P_k}S_k^*, \underline{R_{k-1}}=\underline{U_k}S_k
+                \end{align*}
+                und $S_k$ unitäre Diagonalmatrix (d.h. die diagonaleinträge haben Betrag 1).
+                \begin{align*}
+                    \implies A_k &\stackrel{\ref{l4.15}.2}{=}\underline{Q_{k-1}}^* A\underline{Q_{k-1}}\\
+                    &=S_k\underline{P_k}^* A \underline{P_k}S_k^* \\
+                    &=S_k U_k \underbrace{U_k^{-1}\underline{P_k}^*}_{=X_k^{-1}}\underbrace{A \underline{P_k}}_{=A^{k+1}\underline{U_k}^{-1}=\underbrace{X\Lambda^{k+1}L\Lambda^{-(k+1)}}_{=X_{k+1}}\Lambda^{(k+1)}R\underbrace{U_k^{-1}}_{R^{-1}\Lambda^{-k}U_k^{-1}}}S_k^* = (\star)\\
+                    &= S_k U_k \underbrace{X^{-1}_kX_{k+1}}_{=(I+E_k)^{-1}(I+E_k)=I+F_k, \left\Vert F_k \right\Vert_2=O(q^k)}\Lambda U_{k}^{-1} S_k^*\\
+                    &= \underbrace{S_k U_k\Lambda U_k^{-1}S_k^*}_{\text{obere Dreiecksmatrix}}+\underbrace{S_k U_kF_k\Lambda U_k^{-1}S_k^*}_{(+)}
+                \end{align*}
+
+                Mit Nebenrechnung 
+                \begin{align*}
+                    \left\Vert U_k \right\Vert_2 = \left\Vert P_k^* X_k \right\Vert_2 = \left\Vert X_k \right\Vert_2
+                \end{align*}
+
+                \begin{align*}
+                    \left\Vert (+) \right\Vert_2 &\leq \underbrace{\left\Vert S_k \right\Vert_2}_{=1} \left\Vert U_k \right\Vert_2 \left\Vert F_k \right\Vert_2 \left\Vert U_k^{-1} \right\Vert_2 \underbrace{\left\Vert S_k \right\Vert_2}_{=1} \underbrace{\left\Vert \Lambda \right\Vert_2}_{=\left\vert \lambda_1 \right\vert}\\
+                    &\leq \underbrace{\cond_2(X_k)}_{\leq 2\cond_2 (X)}\left\vert \lambda_1 \right\vert \left\Vert F_k \right\Vert_2=O(q^k)
+                \end{align*}
+
+                $\implies A_k$ konvergiert gegen eine obere Dreiecksamtrix.
+
+                \underline{\textbf{z.z.}} $\text{diag}(\text{diag}(A_k))\stackrel{k \to\infty}{\to}\Lambda$
+                \begin{align*}
+                    X_k\stackrel{k \to\infty}{\to}X & \implies P_k,U_k\stackrel{k \to\infty}{\to} I \\
+                    &\implies \text{diag}(\text{diag}(A_k))=\text{diag}(\text{diag}(S_kU_k\Lambda U_k^{-1}S_k^*))\\
+                    &=S_k\text{diag}(\text{diag}(U_k\Lambda U_k^{-1}))S_k^*\stackrel{k\to\infty}{\to}\Lambda
+                \end{align*}
+
+            \end{proof}
+
+            \begin{remark}\label{b4.18}
+                \begin{enumerate}
+                    \item Der Fehler im $k$-ten Schritt hängt von $\left|\frac{\lambda_i}{\lambda_k}\right|^k,i>j$ ab.
+                        D.h. falls $\left\vert \lambda_i \right\vert\approx \left\vert \lambda_j \right\vert$,
+                        dann konvergiert das Verfahren sehr langsam.
+                    \item Wir müssen pro Iteration eine QR-Zerlegung mit Aufwand $O(n^3)$ berechnen.
+                \end{enumerate}
+            \end{remark}
+
+        \section{Implementierung des QR-Verfahrens}
+
+            \underline{\textbf{Problem 1:}}  Der Aufwand pro Iteration ist zu hoch.
+
+            \underline{\textbf{Idee:}} Transformiere $A\in\C^{n\times n}$ zuerst mittels Ähnlichkeitstransformationen auf
+            Hessenberg-Form.
+            \begin{align*}
+                \begin{bmatrix}
+                    \star & \star & \star & \star \\
+                    \star & \star & \star & \star \\
+                    \star & \star & \star & \star \\
+                    \star & \star & \star & \star 
+                \end{bmatrix}
+                \stackrel{P_1\cdot}{\rightsquigarrow} \begin{bmatrix}
+                    \star & \star & \star & \star \\
+                    \star & \star & \star & \star \\
+                    0 & \star & \star & \star \\
+                    0 & \star & \star & \star 
+                \end{bmatrix}
+                \stackrel{\cdot P_1}{\rightsquigarrow} \begin{bmatrix}
+                    \star & \star & \star & \star \\
+                    \star & \star & \star & \star \\
+                    0 & \star & \star & \star \\
+                    0 & \star & \star & \star 
+                \end{bmatrix}
+                \stackrel{P_2\cdot}{\rightsquigarrow}\begin{bmatrix}
+                    \star & \star & \star & \star \\
+                    \star & \star & \star & \star \\
+                    0 & \star & \star & \star \\
+                    0 & 0 & \star & \star 
+                \end{bmatrix}\stackrel{P_2\cdot }{\rightsquigarrow} \dots
+            \end{align*}
+
+            $\implies $ mit geeigneten orthogonalen Ähnlichkeitstransformationen  $P_1,\dots,P_{n-1}$ hat $A=(P_{n-2}\cdot\dots\cdot P_1)A (P_{n-2}\cdot\dots\cdot P_1)^*$
+            hat obere Hessenberg-Form.
+
+            Gesamtaufwand: 
+            \begin{align*}
+                \sum_{k=2}^{n-1} 2((k+1)k)+nk\leq 3n^3
+            \end{align*}
+
+            \underline{\textbf{Vorteil:}} Die $QR$-Zerlegung einer Hessenberg-Matrix kann in $(2n^2)$ Multiplikationen 
+            statt $O(n^3)$ berechnet werden.
+            
+            $\rightsquigarrow \underbrace{(G_{n-1,n}\dots G_{2,3}G_{1,2})}_{=Q_0^*}(A_0-\mu_0 I)=R_0$
+
+            \underline{\textbf{Aber:}} hat $R_0Q_0+\mu_k I$ wieder Hessenberg-Form?
+
+            \begin{align*}
+                \begin{bmatrix}
+                    \star & \star & \star & \star \\
+                     & \star & \star & \star \\
+                    & & \star & \star \\
+                    & & & \star \\
+                \end{bmatrix}\stackrel{\cdot G_{1,2}^*}{\to} 
+                \begin{bmatrix}
+                    \star & \star & \star & \star \\
+                    \star & \star & \star & \star \\
+                    & & \star & \star \\
+                    & & & \star \\
+                \end{bmatrix}\stackrel{\cdot G_{1,2}^*}{\to} 
+                \begin{bmatrix}
+                    \star & \star & \star & \star \\
+                    \star & \star & \star & \star \\
+                    & \star & \star & \star \\
+                    & & & \star \\
+                \end{bmatrix}
+            \end{align*}
+
+            $\implies$ Ja! Gesamtaufwand pro Iteration: $4n^2$.
+
+            \underline{\textbf{Problem 2}} Die Konvergenz des $QR$-Verfahrens ohne Shift, d.h. $\mu_k=0$,
+            kann sehr langsam sein.
+
+            \underline{\textbf{Frage:}} Wie müssen wir $\mu_k$ in (\ref{g4.6}) wählen?
+
+            \begin{corollary}\label{k4.19}
+                Unter den gleichen Voraussetzungen wie in \ref{s4.17}, aber mit $\mu_k\neq 0$, hängt 
+                der Fehler des $QR$-Verfahrens im $k$ten Schritt von
+                \begin{align*}
+                    \left\vert \frac{\lambda_i-\mu_0}{\lambda_j-\mu_0} \right\vert\cdot \dots \cdot \left\vert \frac{\lambda_i-\mu_{k-1}}{\lambda_j-\mu_{k-1}} \right\vert,i>j
+                \end{align*} 
+                ab.
+            \end{corollary}
+
+            \begin{proof}
+                Analog zu Satz \ref{s4.17}.
+            \end{proof}
+
+            \underline{\textbf{Idee 1:}} Wähle $\mu_k=a_{nn}^{(k)}$
+
+            \underline{\textbf{Idee 2:}} Wähle $\mu_k$ als EW von $\begin{bmatrix}
+                a_{n-1n-1}^{(k)} & a_{n-1n}^{(k)}\\
+                a_{nn-1}^{(k)} & a_{nn}^{(k)}
+            \end{bmatrix}$
+             der näher an $a_{nn}^{(k)}$ liegt.
+
+            In beiden Fällen kann man zeigen, dass nach wenigen Schritten
+
+            \begin{align*} % TODO FIX
+                A_k\approx \begin{bmatrix}
+                    \star &\dots&\star &\star\\
+                    \star&\ddots&&\vdots\\
+                    &\ddots&\star&\vdots\\
+                    &&\star&\star\\
+                    0&\dots&0&\lambda_n
+                \end{bmatrix}
+            \end{align*}
+
+            Diesen Verfahren heißt Deflation.y
+
+            In der Praxis benötigt das Verfahren nur $O(n)$ Iterationen.
+            $\implies$ Gesamtaufwand $P(n^3)$.
+
+            \underline{\textbf{Problem 3:}} Wie berechnen wir Eigenvektoren?
+
+            $A=Q^*RQ$ betrachte $R$ (siehe Notizen)
+
+            $A=PA_0P^*$ Die obere Hessenbergmarix $A_0=P^* A P$ hat die gleichen EW wie $A$.
+
+            $\rightsquigarrow$ Berechne die EV von $A_0$ mittels inverser Vektoriteration,
+            Sift-Parameter Eigenwetrnährung aus dem QR-Verfahren.
+
+            Benutze $QR$-zerlegung um LGS zu lösen. $\rightsquigarrow O(n^2)$ prob EV, da die inverse Vektoriteration meistens in einem Schritt konvergiert.
+
+            $\implies $ Zusatzaufwand $O(n^3)$ um EV zu berechnen.
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 15 am 01.12.2022\xrfill[0.7ex]{1pt}
+            
+        \section{Singulärwertzerlegung}
+
+            \begin{definition}\label{d4.20}
+                Sei $A\in\C^{m\times n},m\geq n$. Eine \textbf{Singulärwertzerlegung von $A$} (SVD) ist eine Faktorisierung
+                \[A=U\Sigma V^*\]
+                mit unitären Matrizen $U=\begin{bmatrix}
+                    u_1&\dots &v_m
+                \end{bmatrix}\in\C^{m\times m},V=\begin{bmatrix}
+                    v_1 & \dots & v_n\in\C^{n\times n}
+                \end{bmatrix}$
+                mit \[\Sigma = \begin{bmatrix}
+                    \hat{\sigma}=\text{diag}(\sigma_1,\dots,\sigma_n)\in\R^{n\times n}\\
+                    0
+                \end{bmatrix}\]
+                mit $\sigma_i\geq 0$. Die $u_i$ heißen linke Singulärvektoren, die $v_i$ rechte Singulärvektoren und die $\sigma_i$ Singulärwerte.
+            \end{definition}
+
+            \begin{theorem}\label{s4.21}
+                Für jede Matrix $A\in\C^{m\times n},m\geq n$ existiert eine SVD.
+            \end{theorem}
+
+            \begin{proof}
+                \underline{\textbf{Idee:}} Zeige, dass es unitäre Matrizen $U,V$ gibt, mit:
+                
+                \begin{equation}\label{g4.7}
+                    U^* A V = \begin{bmatrix}
+                        \sigma & &0&\\
+                        0 & & B &
+                    \end{bmatrix}, 0\leq \sigma\in \R
+                \end{equation}
+                Der Rest folgt dann durch Induktion.
+
+                Sei \[\sigma = \left\Vert A \right\Vert_2=\max_{x\in\C^n, \left\Vert x \right\Vert_2=1}\left\Vert Ax \right\Vert_2\geq 0\]
+            
+                Das Maximum wird angenommen $\implies\exists x\in\C^n, \left\Vert x \right\Vert_2=1$ mit 
+                \[\sigma^2 = \left\Vert Ax \right\Vert_2^2=x^*A^*Ax = (\star)\]
+
+                Setze 
+                \begin{align*}
+                    u=\frac{1}{\sigma}Ax \stackrel{(\star)}{\implies} \left\Vert u \right\Vert_2=1\\
+                    v=x \implies \left\Vert v \right\Vert_2=1\\
+                    \implies Av=\sigma u = (\star \star)
+                \end{align*}
+
+                Ergänze zur ONB:
+                \begin{align*}
+                    U=\begin{bmatrix}
+                        &&\\
+                        u_1 & \dots & u_m\\
+                        &&
+                    \end{bmatrix}\\
+                    V=\begin{bmatrix}
+                        &&\\
+                        v_1 & \dots & v_m\\
+                        &&
+                    \end{bmatrix}\\
+                    \implies U^* A V = \begin{bmatrix}
+                        &u^*&\\
+                        &u_2^*& \\
+                        &\vdots& \\
+                        &u_m^*&
+                    \end{bmatrix}A\begin{bmatrix}
+                        &&\\
+                        v & v_2 & \dots & v_n\\
+                        &&
+                    \end{bmatrix}\\
+                    =\begin{bmatrix}
+                        \sigma & & w^* & \\
+                        0 & & &\\
+                        \vdots & & B &\\
+                        0 & & & 
+                    \end{bmatrix}=A_1,w\in \C^{n-1}
+                \end{align*}
+
+                \begin{align*}
+                    \sigma^2&=\left\Vert A \right\Vert_2^2 \\
+                    &\stackrel{\text{Invarianz unter oth. Proj.}}{=} \left\Vert A_1 \right\Vert_2^2\\
+                    &=\sup_{0\neq x\in\C^n}\frac{\left\Vert A_1 x \right\Vert_2^2}{\left\Vert x \right\Vert_2^2}\\
+                    \stackrel{x=\begin{pmatrix}\sigma\\w\end{pmatrix}}{\geq }\frac{1}{\sigma^2+\left\Vert w \right\Vert_2^2}\left\Vert\begin{bmatrix}
+                        \sigma & & w^* & \\
+                        0 & & &\\
+                        \vdots & & B &\\
+                        0 & & & 
+                    \end{bmatrix}\begin{pmatrix}\sigma\\w\end{pmatrix}  \right\Vert\\
+                    =\frac{1}{\sigma^2+\left\Vert w \right\Vert_2^2}\left\Vert \begin{pmatrix}\sigma^2 + \left\Vert w \right\Vert_2^2\\Bw\end{pmatrix} \right\Vert\\
+                    \geq \sigma^2 + \left\Vert w \right\Vert_2^2 \implies w=0\implies (\ref{g4.7})
+                \end{align*}
+            \end{proof}
+
+            \begin{corollary}\label{k4.22}
+                Sei $U^+ A V= \Sigma$ eine SVD von $A\in\C^{m\times n}$. Dann gilt:
+                \begin{enumerate}
+                    \item $Av_i=\sigma_iu_i$ und  $A^*u_i = \sigma_i v_i$
+                    \item Falls $\sigma_1\geq \dots \geq \sigma_r >\sigma_{r+1}=\dots = \sigma_n=0$ gilt
+                        \begin{enumerate}
+                            \item Rang$(A)=r$
+                            \item Kern$(A)=\text{span}(v_{r+1},\dots, v_n)$
+                            \item Bild$(A)=\text{span}(u_1,\dots,u_r)$
+                        \end{enumerate}
+                    \item $\left\Vert A \right\Vert_2 = \sigma_1$
+                    \item $\left\Vert A \right\Vert_F=\sqrt{\sum_{i=1}^m\sum_{j=1}^n\left\vert a_{ij}^2 \right\vert} = \sqrt{\sum{i=1}^n\sigma_i^2}$
+                    \item $\cond_2(A)=\frac{\sigma_1}{\sigma_n}$
+                    \item Für $\lambda_i=\sigma_i^2$ gilt $\lambda_i$ sind EW von $AA^*$ und $A^*A$ zu den Eigenvektoren $u_1,\dots, u_n$ und $v_1,\dots, v_n$
+                \end{enumerate}
+            \end{corollary}
+
+            \begin{proof}
+                Übungen.
+            \end{proof}
+
+            Wozu brauchen wir eine SVD?
+
+            z.B. als theoretisches Hilfmittel:
+            \begin{lemma}\label{l4.23}
+                Sei $A\in \C^{m\times n},m\geq n$ mit $\rang(A)=r$. Sei $U\Sigma V^*$ eine SVD von $A$.
+                Dann ist 
+                \begin{equation*}
+                    A^\dagger = V \Sigma^\dagger U ^*, \Sigma^\dagger=\begin{bmatrix}
+                        \sigma_1^{-1} & & &&\\
+                        & \ddots & & &&\\
+                        &&\sigma_r^{-1} & &&\\
+                        &&&0&&\\
+                        &&&&\ddots&\\
+                        &&&&&0
+                    \end{bmatrix}
+                \end{equation*}
+            \end{lemma}
+
+            \begin{proof}
+                Übungen.
+            \end{proof}
+
+            \begin{remark}\label{b4.24}
+                Die charakterisierung von Lemma \ref{l4.23} bietet eine einfache Möglichkeit Satz \ref{s2.23} zu beweisen.
+            \end{remark}
+
+            z.B. als Hilfsmittel zur Datenkompression:
+
+            \begin{theorem}[Eckhart-Young]\label{s4.25}
+                Sei $A\in\C^{m\times n},m\geq n,$ und $k<\rang(A)=r$. Sei $A=U\Sigma V^*$
+                eine SVD und 
+                \begin{equation*}
+                    A_k=\sum_{j=1}^k \sigma_k u_j v_j^*
+                \end{equation*}
+                Dann ist 
+                \begin{equation*}
+                    \min_{\rang(B)=k} \left\Vert A-B \right\Vert_2 \stackrel{1.}{=} \left\Vert A-A_k \right\Vert_2 \stackrel{2.}{=} \sigma_{k+1}
+                \end{equation*}
+            \end{theorem}
+
+            \begin{proof}
+                $\rang(A_k)=k$ ist klar.
+                \begin{align*}
+                    \left\Vert A-A_k \right\Vert_2=\left\Vert U\left(\begin{pmatrix}
+                        \sigma_1 & &\\
+                        &\ddots & \\
+                        &&\sigma_n\\
+                        &0&
+                    \end{pmatrix}-\begin{pmatrix}
+                        \sigma_1 & &&&\\
+                        &\ddots & &&\\
+                        &&\sigma_k&&\\
+                        &&&0&\\
+                        &&&&\ddots \\
+                        &&0&&
+                    \end{pmatrix}\right) \right\Vert_2^2=\sigma_{k+1}\implies 2.
+                \end{align*}
+
+                \underline{\textbf{z.z.}} 1.:
+
+                Sei 
+
+            \begin{align*}
+                &B \in\C^{m\times n},\rang(B)=k\\
+                &\implies \dim(\ker(B))=n-k\\
+                &\implies \underbrace{\ker(B)\cap \text{span}(v_1,\dots v_{k+1})}_{Z}\neq \{0\}
+            \end{align*}
+
+            Sei $z\in Z,z\neq 0,\left\Vert z \right\Vert_2=1$
+
+            \begin{align*}
+                &\implies Bz &=0\\
+                &\implies Az&=U\Sigma V^* z\\
+                &&=\begin{bmatrix}
+                    &&\\
+                    u_1 & \dots & u_m\\
+                    &&
+                \end{bmatrix}
+                \begin{bmatrix}
+                    \sigma_1 && \\
+                    & \ddots &\\
+                    &&\sigma_n \\
+                    &0&
+                \end{bmatrix}
+                \begin{bmatrix}
+                    v_1\\
+                    \vdots \\
+                    v_n
+                \end{bmatrix}z \\
+                &&= \sum_{j=1}^{k+1}\sigma_i(v_i^*z)u_i
+            \end{align*}
+
+            \begin{align*}
+                \left\Vert A-B \right\Vert_2^2 &= \max_{\left\Vert x \right\Vert_2=1} \left\Vert (A-B)x \right\Vert_2^2 \\
+                &\stackrel{x=z}{\geq} \left\Vert (A-B)z \right\Vert_2^2 \\
+                &= \left\Vert Az \right\Vert_2^2\\
+                &=z^* A^* A z\\
+                &=\sum_{j=1}^{k+1}\sigma_j^2 (V_j^*z)^2 \\
+                \geq \sigma_{k+1}^2 \underbrace{\sum_{j=1}^{k+1} (V_j^*z)^2}_{\stackrel{\text{Satz} \ref{s1.16}}{=}\left\Vert z \right\Vert_2^2=1}\geq \sigma_{k+1}^2
+            \end{align*}
+
+            \end{proof}
+
+            \begin{remark}\label{4.26}
+                \begin{enumerate}
+                    \item Satz \ref*{s4.25} ist eine Bestapüroximationsaussage zur Approximation von belibiegen Matrizen durch Matrizen von niedriegerem Rang.
+                    \item Die Aussage gilt ähnlich auch für die Frobeniusnorm.
+                \end{enumerate}
+            \end{remark}
+
+            Wie berechnen wir eine SVD?
+
+            \underline{\textbf{Möglichkeit 1.}}
+
+            Berechne EW $\lambda_i=\sigma_i^2$ und zugeh EV von $A^*A$ oder $AA^*$. Die Matrizen sind hermitisch, d.h.
+            die Berechnung der EW \& EV-Berecnung gutgestellt/ gutkonditioniert \textbf{falls} $AA^*, A^*A$ nicht 
+            berechnet werden müssen.
+
+            \begin{example}\label{b4.27}
+                Rundungsgenauigkeit $4$ Ziffern.
+                \begin{align*}
+                    A=A^t = \begin{bmatrix}
+                        1.005 & 0.995 \\
+                        0.995 & 1.005
+                    \end{bmatrix} \implies \sigma_1=2,\sigma_2=0.01
+                \end{align*}
+                \underline{\textbf{Aber:}} 
+                \begin{align*}
+                    \text{round}(A^* A)=\begin{bmatrix}
+                        2&2\\
+                        2&2
+                    \end{bmatrix}\\
+                    \implies \lambda_1=4,\lambda_2=0\\
+                     \implies \sigma_1 =\sqrt(\lambda_1),\sigma_2=\sqrt{\lambda_2}
+                \end{align*}
+            \end{example}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 16 am 06.12.2022\xrfill[0.7ex]{1pt}
+            
+            \underline{\textbf{Möglichkeit 2:}} SVD-Algorithmus
+
+        \section{SVD-Algorithmus}
+
+            \underline{\textbf{Idee:}} Führe QR-Algorithmus auf $A^*A$ durch, ohne $A^*A$ zu berechnen.
+
+            \underline{\textbf{Beobachtung:}} Sei $\C^{m\times n} \ni A=U\Sigma V^*$ eine SVD. Seien $\tilde{U}\in\C^{m\times m},\tilde{V}\in\C^{n\times n}$ unitäre Matrizen.
+
+            \[\implies \tilde{A}=\tilde{U}A\tilde{V}^*=\underbrace{\tilde{U}U}_{\hat{U}}\Sigma \underbrace{V^*\tilde{V}^*}_{V^*}\]
+            ist eine SVD von $\tilde{A}$ und $\hat{U},\hat{V}$ sind unitär.
+
+            \underline{\textbf{Idee:}} Analog zum $QR$-Verfahren:
+
+            \underline{\textbf{Schritt 1:}}  Transformieren $A\in\C^{m\times n}$ mittels unitärer 
+            Ähnlichkeitstransformationen  auf obere Dreiecksgestalt $B\in\C^{m\times n}$
+
+            \begin{equation*}
+                B=\begin{bmatrix}
+                    \text{diagonal Matirix mit einer Diagonalen über ihr besetzt}\\ % Ändern
+                    0
+                \end{bmatrix}
+            \end{equation*}
+
+            $\implies A,B$ haben die gleichen Singulärwerte
+
+            $\implies B^*B$ ist hermitisch und tridiagonal, hat also Hessenbergform.
+
+            \underline{\textbf{Schritt 2:}} Wende modifizierten QR-Algorithmus an (auf $B^*B$, ohne 
+            dieses Produkt zu berechnen).
+
+            \underline{\textbf{Zu Stufe 1:}}
+
+            \begin{lemma}\label{l4.28}
+                Zur Matrix $A\in\C^{m\times n},m\geq n$, existieren unitäre Matrizen $P\in\C^{m\times m},Q\in\C^{n\times n}$ s.d. 
+                \[B=PAQ=\begin{bmatrix}
+                    C\\0
+                \end{bmatrix}\]
+                mit $C\in\C^{n\times n}$ eine Bidiagonalform.
+            \end{lemma}
+
+            \begin{proof}
+                z.B. mit Householder-Transformationen:
+
+                \begin{align*}
+                    \begin{bmatrix}
+                        \star & \dots & \star \\
+                        \vdots & \ddots & \vdots \\
+                        \star & \dots  & \star
+                    \end{bmatrix}\stackrel{P_1\cdot}{=}\begin{bmatrix}
+                        \star & \star&\dots & \star \\
+                        0& \star&\dots & \star \\
+                        0&\star & \dots & \star \\
+                        0&\vdots & \ddots & \vdots \\
+                        0&\star & \dots  & \star
+                    \end{bmatrix}
+                    \stackrel{\cdot Q_1}{=}\begin{bmatrix}
+                        \star & \star & 0 &\dots & 0\\
+                        0 & \star & \star &\dots & \star \\
+                        \vdots & \vdots &\ddots &\vdots\\
+                        0&\star &\dots & \dots &\star
+                    \end{bmatrix}=\dots = B=PAQ
+                \end{align*}
+            \end{proof}
+
+            \underline{\textbf{Zu Stufe 2.}} Bemerke $A^* A, B^*B,C^*C$ haben die gleichen EW.
+            D.h. $A,B,C$ haben die gleichen Singulärwerte. 
+            
+            $C$ ist am ``einfachsten'' $\implies$ Modifiziere $QR$-Algorithmus für $C^*C$
+
+            \underline{\textbf{Beobachte:}}
+
+            \begin{equation*}
+                C^*C=\begin{bmatrix}
+                    c_{11} & & & \\
+                    c_{12} & \ddots & & \\
+                    &  \ddots & \ddots & \\
+                    & & c_{n-1,n} & c_{nn}
+                \end{bmatrix}
+                \begin{bmatrix}
+                    c_{11} & c_{21} & & \\
+                     & \ddots &\ddots & \\
+                    &  & \ddots & c_{n-1,n} \\
+                    & &  & c_{nn}
+                \end{bmatrix}=\begin{bmatrix}
+                    \vert c_{11}\vert^2 % TODO
+                \end{bmatrix}
+            \end{equation*}
+
+            \begin{equation*}
+                G_{12}C^* C = \begin{bmatrix}
+                    \star & \star & \star & &\\
+                    0 & \ddots & \ddots  & & \\
+                    &&\star %TODO
+                \end{bmatrix}
+            \end{equation*}
+
+            \begin{equation*}
+                \underbrace{\tilde{Q}G_{12}}_{Q^*}C^*C=R=\begin{bmatrix}
+                    \star &  \dots &  \star\\
+                    &\ddots &\vdots \\
+                    &&\star
+                \end{bmatrix}
+            \end{equation*}
+
+            für passendes $\tilde{Q}$.
+
+            \begin{equation}\label{g4.9} % Was ist 4.8???
+                RQ=\underbrace{Q^* C^* C} Q
+            \end{equation}
+
+            Ausserdem: $G_{12}$ hängt nur von $\begin{bmatrix}
+                |c_{11}|^2\\
+                c_{11}\overline{c_{12}}
+            \end{bmatrix}$ ab:
+
+            \begin{equation*}
+                \begin{bmatrix}
+                    \star \\
+                    0
+                \end{bmatrix}=G_{12}\begin{bmatrix}
+                    \star \\ \star
+                \end{bmatrix}
+            \end{equation*}
+
+            d.h. $G_{12}$ ist unabhängig von der Skalierung dieses Vektors. 
+
+            $\implies G_{12}$ hängt nur von $\begin{bmatrix}
+                \bar{c_{11}}\\
+                \overline{c_{12}}
+            \end{bmatrix}$
+            ab.
+
+            \underline{\textbf{Frage:}} Wie berechnen wir $\tilde{Q}$?
+
+            \begin{theorem}[Implizietes $Q$ Theorem]\label{s4.29}
+                Sei $\in\C^{n\times n}$, $Q\in\C^{n\times m}$ mit orthonormalen Spalten so, dass $H=Q^*AQ$
+                obere Hessenberg-Form hat. Falls die untere Nebendiagonaleinträge alle nicht Null sind, dann sind diese Matrizen $Q$ und $H$
+                (bis auf Skalierung der Spalten von $Q$ mit $\zeta_i\in\C,|\zeta_i|=1$) eindeutig durch die erste oder die letzte Spalte von $Q$ bestimmt.
+            \end{theorem}
+
+            \begin{proof}
+                Ähnlich zur $QR$-zerlegung, siehe z.B. Golub \& van Loan.
+            \end{proof}
+
+            \underline{\textbf{Das bedeutet:}} Die erste Spalte von $Q$ hängt nur von $G_{12}$ ab. D.h. de erste Spalte von $Q$ hängt nur von $C$ ab.
+
+            \underline{\textbf{Beobachte: }} $C$ ist eine obere Bidiagonalmatrix. Wir wenden dann $G_{12}$ von rechts an und eleminieren den ersten Eintrag der oberen Nebendiagonale (bekommen aber ggf. einen Eintrag in der ersten Spalte unter dem ersten Eintrag).
+            Mit einer weiteren Givenrotation $U_2^*$ können wir dann diesen Eintrag elemenieren, bekommen aber einen neuen Eintrag usw. Am Schluss sollten wir dann eine Bidiagonalform $\tilde{C}$ haben.
+
+            Im englischen sagt man ``chasing down the diagonal''.
+
+            \begin{equation*}
+                \tilde{C}=\underbrace{(U_n^*\cdot\dots\cdot U_2^*)}_{\tilde{U}}C\underbrace{(G_{12}^* V_3\cdot\dots\cdot V_n)}_{\tilde{V}}
+            \end{equation*}
+
+            ist bidiagonal und $\tilde{U},\tilde{V}$ unitär.
+
+            $\implies \tilde{C}^*\tilde{C}=\tilde{V}^*C^*\tilde{U}^*\tilde{U}C\tilde{V}=\tilde{V}^*C^* C\tilde{V}$
+            ist tridiagonal, d.h. hat auch obere Hessenberg-Form. Die erste Spalte von $\tilde{V}$ ist durch $G_{12}$, also $C$, bestimmt.
+
+            $\implies RQ\stackrel{(\ref{g4.9})}{=}Q^*C^*CQ\stackrel{\text{Satz }\ref{s4.29}}{=}\tilde{V}^*C^*C\tilde{V}\tilde{C}^*\tilde{C}$ unter der Annahme, dass die untere Nebendiagonale von $C^*C$ tatsächlich nur nicht-Null-Einträge hat
+            
+            und  $Q=\tilde{V}\text{diag}(\zeta_1,\dots\zeta_n),|\zeta_i|=1$.
+
+            \begin{algorithm}[H]
+                \caption{SVD-Algorithmus}\label{a4.30}
+                  \textbf{Input:} $A\in\C^{m\times n}$\\
+                  \textbf{Output:} Singulärwerte von $A$
+                  \begin{algorithmic}
+                     \State \underline{\textbf{Stufe 1:}} Transformiere $A$ wie im Beweis von Satz \ref{s4.28} auf Bidiagonalgestalt
+                    \[PAQ=B=\begin{bmatrix}
+                        C\\0
+                    \end{bmatrix}\text{ C bidiagonal}\]
+                    \State \underline{\textbf{Stufe 2:}} $C_0=C$
+                    \For {$k=0,\dots$}
+                    \State  ``chasing down the diagonal'': Berechne \[C_{k+1}(U_n^*\cdot\dots \cdot U_2^*)C(G_{12}V_3\cdot\dots\cdot V_n)\]
+                    \State Konvergenzkriterium
+                    \EndFor 
+                  \end{algorithmic}
+               \end{algorithm}
+            
+            \begin{remark}\label{b.4.31}
+                \begin{enumerate}
+                    \item Konvergenzkriterien, Shifts, etc. gilt alles analog zum $QR$-Algorithmus.
+                    \item Aufwand (für $m=n$, pro Iteration): 
+                    
+                        Stufe 1: $O(n^3)$
+
+                        Stufe 2: $O(n)$ 
+                \end{enumerate}
+            \end{remark}
+
+            
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 17 am 08.12.2022\xrfill[0.7ex]{1pt}
+            
+        \section{Große, dünnbesetzte lineare Eigenwertprobleme}
+
+            \underline{\textbf{Projektionsmethoden!}} 
+
+            \underline{\textbf{Erinnerung:}} Projektionsmethode zum Lösen von $Ax=b$, $A\in\R^{n\times n},x,b\in\R^n$:
+
+            \begin{equation}\label{g4.10}% einen zu hoch
+                \text{Finde }\tilde{x}\in K\text{ so, dass }b-Ax\perp K,
+            \end{equation}
+            wobei $K\subset \R^n$ ein endlichdimensionaler Unterraum sei.
+
+            \underline{\textbf{Idee:}}
+
+            Setzte $b=\lambda x$, d.h. für $A\in\C^{n\times n}$:
+
+            Finde $(\tilde{\lambda},\tilde{u})\in \C\times \C^n$ so, dass $A\tilde{u}-\tilde{\lambda} \tilde{u}\perp K$,
+            wobei $K\in\C^n$ ein endlichdimensionaler Unterraum sei.
+
+            Sei $V=[v_1,\dots,v_m]$, $m<n$, eine ONB von K. 
+
+            $\implies \tilde{u}\in K \iff \tilde{u}=Vy,y\in\C^m$
+
+            Außerdem: 
+
+            \begin{align}\label{g4.11}%  Nummerierung anpasse
+                (\ref{g4.10}) &\iff AVy-\tilde{\lambda}Vy\perp K\notag\\
+                &\iff \langle AVy-\tilde{\lambda}Vy,v_i \rangle_2=0,i=1,\dots,m\notag\\
+                &\iff V^* A V^*y-\tilde{\lambda}\underbrace{V^*V}_{=I}y = 0\notag\\
+                &\iff V^*A Vy=\tilde{\lambda}y 
+            \end{align}
+
+            Das ist ein EW-Problem der Größe $m\times m$ und kannn für $m$ nicht zu groß z.B. 
+            mit dem QR-Verfahren gelöst werden.
+
+            \begin{algorithm}[H]
+                     \caption{Rayleigh-Ritz-Verfahren}\label{a4.32}
+                  \textbf{Input:} $A\in\C^{n\times n}$, Unterraum $K\in\C^n$, $m$-dimensional\\
+                  \textbf{Output:} $m$ approximierte Eigenpaare $(\tilde{\lambda_i},\tilde{u_i})_i,i=1,\dots,m$
+                  \begin{algorithmic}
+                    \State Berechne OBN von $K \rightsquigarrow V$
+                    \State Berechne Matrix $V^*AV$
+                    \State Berechne EP $(\tilde{\lambda_i},\tilde{y_i})$ $i=1,\dots,m$ von $V^*AV$
+                    \State Berechne $(\tilde{\lambda_i},\tilde{u_i})=\tilde{\lambda_i},\tilde{Vy_i}, i=1,\dots,m$
+                  \end{algorithmic}
+               \end{algorithm}
+            
+            \underline{\textbf{Frage:}} Wie genau sind die Approximationen der EP?
+
+            \begin{lemma}\label{l4.33}
+                Sei $K$ invariant unter A, d.h. $AK\subset K$. Dann sind die mit dem Rayleigh-Ritz-Verfahren berechneten EP exakt.
+            \end{lemma}
+
+            \begin{proof}
+                \begin{align*}
+                    \tilde{\lambda}\tilde{u}=\tilde{\lambda} Vy=V\tilde{\lambda}y\stackrel{\ref{g4.11}}{=}VV^*\underbrace{A\underbrace{Vy}_{\tilde{u}}}_{A\tilde{u}\in K}
+                \end{align*}
+                \begin{align*}
+                    A\tilde{u}\in K&\implies A\tilde{u}&=\sum_{i=1}^m\alpha_iv_i,\alpha_i\in\C\\
+                    &\implies VV^*A\tilde{u}&=VV^*\sum_{i=1}^m\alpha_iv_i \\
+                    &&=\sum_{i=1}^m\alpha_i\underbrace{V\underbrace{V^*v_i}_{e_i}}_{v_i}\\
+                    &&=A\tilde{u}
+                \end{align*}
+            \end{proof}
+
+            \begin{remark}\label{b4.34}
+                Es können auch allgemeinere Projektionsmethoden
+
+                Fine $(\tilde{\lambda},\tilde{u})\in\C\times K$ so, dass 
+                \begin{equation*}
+                    A\tilde{u}-\tilde{\lambda}\tilde{u}\perp L
+                \end{equation*}
+                für endlichdimensionale Unterräume $K,L$ verwendet werden.
+
+                Solche Methoden können relativ allgemein analysiert werden, bringen aber bis auf gewisse Spezialfälle wenig 
+                konkrete Aussagen.
+            \end{remark}
+
+            In der Praxis werden eigentlich fast immer Krylovraumverfahren verwendet.
+
+            \underline{\textbf{Idee:}} Das Arnoldi-Verfahren erzeugt iterativ eine ONB $v_1,\dots,v_m$ von 
+            $K_(A,v)$, $m=1,\dots,$. Während der Iteration wid 
+            \begin{equation*}
+                V_m^*AV_m=H_{m,m}, V=[v_1,\dots,v_m] \text{ bexrechnet.}
+            \end{equation*}
+
+            $H_{m,m}$ hat obere Hessenberg-Form.
+
+            \begin{algorithm}[H]
+                \caption{Arnoldi-Verfahren für lineare Eigenwertprobleme}\label{a4.35} 
+                \textbf{Input:} $A\in\C^{n\times n},0\neq v\in\C^n,m\in N$\\
+                \textbf{Output:} Approximative Eigenpaare $(\tilde{\lambda_i},\tilde{u_i})_i,,i=1,\dots,m$
+                \begin{algorithmic}
+                    \State $v_1=\frac{v}{\left\Vert v \right\Vert_2}$
+                    \For {$i=1,2,\dots,m$}
+                        \State Bestimme $V_j,H_{j,j}$ mittels Arnoldi-Verfahren
+                        \State (Stop bei Abbruch)
+                        \State Löse $H_{j,j}y_j=\tilde{\lambda}y_j$ mittels $QR$-Algoritmus
+                        \State $\rightsquigarrow$ EP $(\tilde{\lambda_i},\tilde{y_{ji}}),i=1,\dots,j$
+                        \State EP von $A$ sind approximativ $(\tilde{\lambda_i},V\tilde{y_i}),i=1,\dots,j$
+                        \State Konvergenztest
+                        \EndFor 
+                \end{algorithmic}
+                \end{algorithm}
+            
+            \begin{remark}\label{b4.36}
+                \begin{enumerate}
+                    \item $H_{j,j}=V^*_jAV_j$ gemäß Lemma \ref{l3.14}
+                    \item $H_{j,j}$ hat obere Hessenberg-Form, wir können also direkt mit der zweite 
+                        Stufe des $QR$-Algorithmus anfangen.
+                    \item Die Größe des Eigenwertproblems wächst mit jedem Iterationsschritt, ebenso der Speicherbedarf. 
+                    \item Lemma \ref{l4.33} gilt weiterhin. Das bedeutet: Falls das Arnoldi-Verfahren abbricht, dann ist der Krylovraum invariant unter $A$ (Lemma \ref{l3.15}) und die 
+                        bisher berechnten EP sind exakt.
+                \end{enumerate}
+            \end{remark}
+
+            \underline{\textbf{Frage:}} Wie sieht ein geeigneter Konvergenztest aus?
+
+            \begin{lemma}\label{l4.37}
+                Sei $(\tilde{\lambda_i}^{(m)},y_i^{(m)})$ ein EP von $H_{m,m}$ und $\tilde{u_i}^{(m)}=Vy_i^{(m)}$.
+                Dann gilt:
+                \begin{equation*}
+                    (A-\tilde{\lambda_i}^{(m)}I)u_i^{(m)}=h_{m+1,m}e_m^* y_i^{(m)}v_{m+1} 
+                \end{equation*}
+
+                und 
+
+                \begin{equation*}
+                    \left\Vert  (A-\tilde{\lambda_i}^{(m)}I)u_i^{(m)}\right\Vert_2=h_{m+1,m}\left\vert e_m^*y_i^{(m)} \right\vert 
+                \end{equation*}
+            \end{lemma}
+
+            \begin{remark}\label{b4.38}
+                Dieses Lemma ist  das Analogon zu Lemma \ref{l3.17},
+                mit $x_m=\tilde{u_i}^{(m)}$, $b=\tilde{\lambda_i}\tilde{u_i}^{(m)}$.
+            \end{remark}
+
+            \begin{proof}
+                Analog zu Lemma \ref{l3.17}.
+            \end{proof}
+
+            \underline{\textbf{Frage:}} Wie viele Schritte brauchen wir bis zur Konvergenz? Wie gut sind 
+            unsere Approxumationen?
+
+            \begin{remark}\label{b4.39}
+                \begin{enumerate}
+                    \item Eine Konvergenanalyse des Arnoldi-Verfahrens für den betragsmäßig größten EW ist schwierig, und für 
+                        alle anderen EW noch schwieriger. In der Praxis werden die größten EW am besten approximiert.
+                    \item In der Praxis wird das Arnoldi-Verfahren mit einem Restart-Mechanismus angewendet um Speicherplatz zu sparen. 
+                \end{enumerate}
+            \end{remark}
+
+        \noindent
+        \xrfill[0.7ex]{1pt}Ende von Vorlesung 18 am 13.12.2022\xrfill[0.7ex]{1pt}
+        
+            \underline{\textbf{Frage:}} Was können wir über die Approximation der Eigenwerte 
+            von Algorithmus \ref{a4.35} für hermitische Matrizen sagen?
+
+            \begin{remark}\label{b4.40}
+                Für hermitische Matrizen kann Algorithmus \ref{a4.35} zum Lanczos-Verfahren vereinfacht werden.
+                Falls die EV von $A$ nicht berechnet werden sollen, spart dieser Schritt Speicherplatz und Rechenzeit.
+            \end{remark}
+
+            \begin{algorithm}[H]
+                        \caption{Lanczos-Verfahren für lineare Eigenwertprobleme}\label{a4.41}
+                    \textbf{Input:} $A\in\C^{n\times n}$ hermitsch, $v\in\C^n,v\neq 0,m\in N$\\
+                    \textbf{Output:} Approximierte Eigenwerte von $A$
+                    \begin{algorithmic}
+                    \State $v_1=\frac{v}{\left\Vert v \right\Vert_2}$
+                    \For {$j=1,2,\dots,m$}
+                        \State Bestimme $T_j$ mittels Lanczos-Verfahren
+                        \State (Stop bei Abbruch)
+                        \State Löse $T_{j}y_j=\tilde{\lambda}^{(j)}y_j$
+                        \State $\rightsquigarrow$ EP $(\tilde{\lambda_i},\tilde{y_{ji}}),i=1,\dots,j$
+                        \State Konvergenztest
+                    \EndFor 
+                    \end{algorithmic}
+                \end{algorithm}
+            
+            \begin{theorem}\label{s4.42}
+                Sei $A\in\C^{n\times n}$ hermitsch mit $\lambda_1\geq\dots\geq \lambda_n$
+                und orthonormalen EV $\eta_1,\dots,\eta_n$.
+                Seien $\tilde{\lambda}^{(j)}$ die EW von $T_j$ in Algorithmus \ref{a4.41} und $v_1=\frac{v}{\left\Vert v \right\Vert_2}$ der erste ONB-Basisvektor 
+                von $K_j(A,v)$.
+                
+                Dann gilt \begin{equation*}
+                    \lambda_1\geq \tilde{\lambda_1}^{(j)}\geq \lambda_1-(\lambda_1-\lambda_n)\frac{\tan^2(\angle(v_1,\eta_1))}{T_{j-1}^2(1+2\rho_1)}
+                \end{equation*}
+                mit $\rho_1=\frac{\lambda_1-\lambda_2}{\lambda_2-\lambda_n}$
+            \end{theorem}
+
+            \begin{proof}
+                Bemerke: \textbf{a)} $K_j(A,v)=\text{span}(v_1,Av_1,\dots ,A^{j-1}v_1)=\{P(A)v_1,P\in\Pi_{j-1}\}$
+                
+                \textbf{b)} $v_1=\sum_{j=1}^n\xi_i\eta_i,\xi_i\stackrel{\text{Satz } \ref{s1.16}}{=}\langle v_1,\eta_i \rangle_2=\cos(\angle(v_1,\eta_1))$
+
+                \textbf{c)} Der größte Eigenwert $\zeta$ einer hermitsche Matrix $B\in\C^{n\times n}$ ist gegeben durch
+
+                \[
+                    \zeta=\max_{x\in C^n,x\neq 0}\frac{x^* B x}{x^* x}    \text{  Blatt 6, A4}
+                \]
+
+                \begin{align*}
+                    \tilde{\lambda_1}^{(j)}&=\max_{x\in C^n,x\neq 0}\frac{x^* T_j x}{x^* x}\\
+                    &=\max_{x\in C^n,x\neq 0}\frac{x^* V_j^*AV_j x}{x^*V^*_j V_j x}\\
+                    &=\max_{x\in K_j(A,v),x\neq 0}\frac{x^* Ax}{x^*x}\leq \max_{x\in C^n,x\neq 0}\frac{x^*Ax}{x^* x}\\
+                    &= \max_{P\in \Pi_{j-1},P\neq 0}\underbrace{\frac{v_1^* P(A)AP(A)v_1}{v_1^*P(A)^*P(A)v_1}}_{=(\star)}\\
+                    &(\star) = \frac{(\sum_{i=1}^n\xi_iP(A)\eta_i)^*A(\sum_{i=1}^n\xi_iP(A)\eta_i)}{(\sum_{i=1}^n\xi_iP(A)\eta_i)^*(\sum_{i=1}^n\xi_iP(A)\eta_i)}\\
+                    &=\frac{\sum_{i=1}^n \left\vert \xi_i \right\vert^2 P(\lambda_i)^2 \lambda_i}{\sum_{i=1}^n \left\vert \xi_i \right\vert^2 P(\lambda_i)^2}\\
+                    &=\lambda_1 + \frac{\sum_{i=1}^n \left\vert \xi_i \right\vert^2 P(\lambda_i)^2 (\lambda_i-\lambda_1)}{\sum_{i=1}^n \left\vert \xi_i \right\vert^2 P(\lambda_i)^2}\\
+                    &=(\star\star)
+                \end{align*}
+
+                \begin{align*}
+                    &(\star\star)\geq \lambda_1 +(\lambda_n-\lambda_i)\frac{\sum_{i=2}^n\left\vert \xi_i \right\vert^2P(\lambda_i)^2}{\left\vert \xi_1 \right\vert^2P(\lambda_1)^2+\sum_{i=2}^n\left\vert \xi_i \right\vert^2P(\lambda_i)^2}\\ 
+                    &\implies \max_{P\in \Pi_{j-1},P\neq 0}\frac{v_1^* P(A)AP(A)v_1}{v_1^*P(A)^*P(A)v_1}\geq \lambda_1 + \underbrace{(\lambda_n-\lambda_1)}_{\leq 0}\min_{P\in \Pi_{j-1},P\neq 0}\frac{\sum_{i=2}^n\left\vert \xi_i \right\vert^2P(\lambda_i)^2}{\left\vert \xi_1 \right\vert^2P(\lambda_1)^2+\sum_{i=2}^n\left\vert \xi_i \right\vert^2P(\lambda_i)^2}\\ 
+                \end{align*}
+
+                \underline{\textbf{Idee:}} Ersetze das Maximum durch ein speziell gewähltes Polynom $P\in\Pi_{j-1}$ mit $\left\vert P(t) \right\vert$ 
+                möglichst klein auf $[\lambda_n,\lambda_2]$.
+                $\stackrel{\text{Satz }\ref{s3.36}}{\implies}$ Wähle $P(t)=T_{j-1}(x(t))$ mit 
+                \[x(t)=1+2\frac{t-\lambda_2}{\lambda_2-\lambda_n}\]
+                und Tschebyscheff-Polynom 
+                \[T_{j-1}(t)=\cos((j-1)\cos^{-1}(z)),t\in[-1,1]\]
+                \begin{equation*}
+                    \left\vert P(x(t)) \right\vert\leq 1 \forall t\in[\lambda_n,\lambda_2]
+                \end{equation*}
+
+                \begin{align*}
+                    &\implies \max_{P\in \Pi_{j-1},P\neq 0}\frac{v_1^* P(A)AP(A)v_1}{v_1^*P(A)^*P(A)v_1}\geq \lambda_1+(\lambda_n-\lambda_1)\frac{\sum_{i=2}^n\left\vert \xi_i \right\vert^2}{\left\vert \xi_1 \right\vert^2P(\lambda_1)^2}\\
+                    &\geq \lambda_1+(\lambda_n-\lambda_1)\underbrace{\frac{\sum_{j=2}^n \left\vert \xi_i \right\vert^2}{\left\vert \xi_1 \right\vert^2}}_{=\frac{1-\vert\xi_1\vert^2}{\vert\xi_1vert^2}}\frac{1}{P(\lambda_1)^2}
+                \end{align*}
+
+                \begin{align*}
+                        \implies \frac{\sum_{j=2}^n \left\vert \xi_i \right\vert^2}{\left\vert \xi_1 \right\vert^2}=\frac{1-\cos^2(\angle(v_1,\eta_1))}{cos^2(\angle(v_1,\eta_1))}=\tan(\angle(v_1,\eta_1))
+                \end{align*}
+
+            \end{proof}
+
+            \begin{remark}\label{b4.43}
+                \begin{enumerate}
+                    \item Der Satz \ref{s4.42} gilt bei exakter Arithmetik und unter der Annahme, das die EW von $T_j$ exakt berechnet werden.
+                    \item $\rho_1=\frac{\lambda_1-\lambda_2}{\lambda_2-\lambda_n}\geq 0$ ist möglich, d.h. stenggenommen ist $T_{j-1}(1+2\rho_1)$ über die Cosinus-Darstellung nicht definiert.
+                        Hier benutzt man die alternative Darstellung \[T_{j-1}(t)=\frac{1}{2}\left(\left(t+\sqrt{t^2-1}\right)^{j-1}+\left(t-\sqrt{t^2-1}\right)^{j-1}\right)\]
+                        Wir sehen, dass $T_{j-1}(1+2\rho_1)$ exponentiell steigt, somit fällt der Kehrwert exponentiell.
+                    \item Die Aussage des Satzes gilt für den größten EW. Analoge Aussagen für die übrigen EW sind ebenfalls möglich und können dann mit Hilfe der Conrant-Fischer Darstellung gezeigt werden.
+                \end{enumerate}
+            \end{remark}
+
+            % TODO: GGF Übersicht
+
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 19 am 20.12.2022\xrfill[0.7ex]{1pt}
+            
+    \chapter{Numerische Integration, Revisited}                
+
+        \section{Definition, Wiederholung und Fragestellung}
+
+            \underline{\textbf{Aufgabenstellung:}} Berechne $\int_a^bf(x)w(x)dx, w(x)>0$. mit Hilfe 
+            von Punktauswertungen von $f,w$.
+
+            \begin{tcolorbox}[enhanced,breakable,
+            title=Motivation]
+            Wir können dieses Integral (nach Skalierung) als Erwartungswert von $f$ interpretieren.
+            \end{tcolorbox}
+            
+            \begin{definition}\label{d51}
+                Eine \underline{Quadraturformel} zur Approximation von $\int_a^b f(x)w(x)dx$ mit 
+                Stützstellen $(x_i)$ und Gewichten $(w_i)$ ist ein gewichteter Mittelwert.
+                \begin{equation}
+                    Q[f]=\sum_{i=1}^mw_if(x_i)\label{g51}
+                \end{equation}
+                Wir sprechen von einer \underline{zusammengesetzten Quadraturformel} $Q_n[f]$ auf $[a,b]$, wenn 
+                $[a,b]$ in $n$ gleich große Teilintrvalle aufgeteilt, und das Integral auf jedem Teilintervall mit $Q[f]$ berechnet wird.
+            \end{definition}
+
+            \begin{definition}\label{d52}
+                Eine Quadraturformel $Q[f]$ auf $[a,b]$ hat \underline{Exaktheitsgrad $q$}, falls 
+                \begin{equation*}
+                    Q[p]=\int_a^b p(x)w(x)dx,p\in\Pi_q.
+                \end{equation*}
+                Eine zusammengesetzte Quadraturformel $Q_n[f]$ konvergiert mit \underline{Ordnung $s$}, falls 
+                \begin{equation*}
+                    \left\vert Q_n[f]-\int_a^b f(x)w(x)dx \right\vert = O(n^{-s}),n\to\infty
+                \end{equation*}
+            \end{definition}
+
+            \underline{\textbf{Idee:}} Konstruktion von QUadraturformeln mit Exaktheitsgrad $q$: Ersetzte $f$ durch ein
+            Lagrange-Interplolationplynom
+
+            \begin{equation*}
+                f(x)\approx \sum_{i=0}^q f(x_i)L_i(x)
+            \end{equation*}
+
+            von Grad $q$ an Stützstellen $x_0,\dots,x_q$
+
+            \begin{align*}
+                \implies \int_a^b f(x)w(x)&\approx \int_a^b\sum_{i=0}^qf(x)w(x)dx\\
+            \end{align*}
+
+            \begin{equation}
+                \sum_{i=0}^q f(x_i)\underbrace{\int_a^b L_i(x)w(x)dx}_{\coloneqq w_i}\label{g52}
+            \end{equation}
+
+            Für $x_0=a,x_q=b$, dazwischen equidistant, heißen diese Quadraurformeln \underline{{Newton-Cotes-Formeln}}.
+
+            \begin{theorem}\label{s53}
+                Sei $f\in C^{(q+1)}([a,b])$. Die Quadraturformel mit $w=1$ hat Ordnung $q$ und es gilt:
+                \begin{equation*}
+                    \left\vert \int_a^b f(x)dx-Q[f] \right\vert\leq \frac{\left\Vert f^{(q+1)} \right\Vert_{C([a,b])}}{(q+1)!}\int_a^b v(x)dx,
+                \end{equation*}
+                wobei $v\in\Pi_{q+1}$ das \underline{Knotenplynom}
+                \[v(x)=(x-x_0)\cdot\dots\cdot (x-x_q)\]
+                zu $x_0,\dots,x_q$ ist.
+            \end{theorem}
+
+            \begin{proof}
+                Siehe Alma 2.
+            \end{proof}
+
+            \underline{\textbf{Frage:}} Oft müssen wir sehr viele Integrale numerisch ausgerechnet werden, oder 
+            die Auswertung von $f$ ist sehr teuer. Können wir bessere Quadraturformeln finden, d.h. mit höhrem Exaktheitsgrad / höherer Ordnung,
+            bei gleicher Anzahl von Funktionsauswertungen?
+
+            \begin{theorem}\label{s54}
+                Der Exaktheitsgrad der Quadraturformel (\ref{g51}) ist maximal $q=2m-1$.
+            \end{theorem}
+
+            \begin{proof}
+                Sei $v(x)=(x-x_1)\cdot\dots\cdot(x-x_m)$ das Knotenpolynom zu $x_1,\dots,x_m$.
+                \[p(x)=v(x)^2=\prod_{i=1}^m(x-x_i)^2\in\Pi_{2m}.\]
+                \[\implies Q[p]=\sum_{i=1}^m w_i \underbrace{p(x_i)}_{=0}=0\]
+                \[\int_a^b p(x)w(x)dx=\int_a^b\prod_{i=1}^m(x-x_i)^2 \underbrace{w(x)}_{>0}dx\neq 0\]
+            \end{proof}
+
+            \underline{\textbf{Frage:}} Können wir Quadraturformeln (\ref{g51}) mit Exaktheitsgrad $q=2m-1$ finden 
+            und systematisch konstruieren?
+
+            \underline{\textbf{Idee:}} Sei 
+            \[v(x)=(x-x_1)\cdot\dots\cdot(x-x_m)\] 
+            das Knotenplynom und $p\in\Pi_{m-1}$ beliebig.
+            \begin{align*}
+                vp\in\Pi_{2m-1}, (vp)(x_i)=0,i=1,\dots,m
+            \end{align*}
+
+            Annahme: $Q[f]$ hat Exaktheitsgrad $2m-1$
+
+            \begin{equation*}
+               (\star) = Q[vp]=\sum_{i=1}^m w_i\underbrace{(vp)(x_i)}_{=0} =0
+            \end{equation*}
+
+            \begin{align*}
+                &(\star) = \underbrace{\int_a^b v(x)p(x)w(x)dx}_{=\langle v,p \rangle_w \text{ ist ein Skalarprodukt}} \text{ für alle } p\in\Pi_{m-1}\\
+                &\implies v\perp \Pi_{m-1} \text{ bzgl. } \langle \cdot,\cdot \rangle_w\\
+                &\implies x_1,\dots,x_m \text{ müssen Nst eines Polynomes } v \in \Pi_m, v \perp \Pi_{m-1}
+            \end{align*}
+
+        \section{Orthogonalpolynome}
+
+            \underline{\textbf{Generalvoraussetzung:}} Sei $I\subset \R$ (ein Intervall), $w:I\to\R_{>0}$ eine Gewichtsfunktion mit 
+            \[\int_I w(x)dx<\infty.\]
+            Wir schreiben 
+            \[\langle f,g \rangle_w=\int_I f(x)g(x)w(x)dx,\]
+            \[\left\Vert f \right\Vert_w=\sqrt{\langle f,f \rangle_w},\]
+            und definieren 
+            \[L_w^2(I)\coloneqq \{f:I\to\R,\left\Vert f \right\Vert_w<\infty\}\]
+
+
+            \begin{theorem}\label{s55}
+                Zu jeder Gewichtfunktion $w$ und zugehörigem Skalarprodukt existiert eine 
+                eindeutige Folge $\{u_n\}_{n=0}^\infty$ von Polynomen $u_n\in\Pi_n$ mit
+                \begin{align*}
+                    u_n(x)=\gamma_nx^n + \dots, \gamma_n>0
+                \end{align*} 
+                und 
+                \begin{align*}
+                    \langle u_n,u_m \rangle_w=\delta_{nm}.
+                \end{align*}
+
+                Außerdem gilt mit $u_{-1}\coloneqq 0$, dass 
+                \[u_0=\frac{1}{\left\Vert 1 \right\Vert_w}\]
+                \begin{equation}
+                    a_{n+1}u_{n+1}(x)=(x-b_n)u_n(x)-a_nu_{n-1}(x),n\geq 0\label{5.4}
+                \end{equation}
+
+                mit $a_n=\frac{\gamma_{n-1}}{\gamma_n}$ und $b_n=\langle xu_n, u_n \rangle_w$
+
+            \end{theorem}
+
+            \begin{proof}
+                Per Induktion.
+                \underline{\textbf{IV}}: $n=0$ klar.
+
+                \underline{\textbf{IS}}: $n\implies n+1$ Seien $u_{-1},u_0,\dots,u_n$ wie im Satz, d.h. 
+                $u_0,\dots,u_n$ ist eine ONB.
+
+                \begin{equation}
+                    p_{n+1} = (x-b_n)u_n(x)-a_nu_{n-1} \label{g5.5}
+                \end{equation}
+
+                \begin{align*}
+                    \implies \langle p_{m+1},u_n \rangle_w&=\langle xu_{n},u_n \rangle_w-b_n \langle u_n,u_n \rangle_w-a_n \langle u_{n-1},u_n \rangle_w \\
+                    &=0
+                \end{align*}
+
+                \begin{align*}
+                    \langle p_{n+1},u_{n-1} \rangle_w&=\langle xu_n,u_{n-1} \rangle_w-b_n \langle u_n,u_{n-1} \rangle_w-a_n \langle u_{n-1},u_{n-1} \rangle_w\\
+                    &=\langle u_n,xu_{n-1}, \rangle_w\\
+                    &=\langle u_n,xu_{n-1} \rangle_w-a_n\\
+                    &\stackrel{(\ref{g5.4})}{=} \langle u_n,a_nu_n \rangle_w+\langle u_n,b_{n-1}u_{n-1} \rangle_+\langle u_n,a_{n-1}u_{n-2} \rangle_w -a_n\\
+                    &=0
+                \end{align*}
+
+                Für $0\leq k\leq n-2$:
+
+                \[p_{n+1},u_k=\langle xu_n,u_k \rangle_w-b_n \langle u_n,u_k \rangle_w-a_n \langle u_{n-1},u_k \rangle_w=\langle u_n,\underbrace{xu_k}_{\in\Pi_{k+1}=\text{span}\{u_0,\dots,u_{k+1}\} \perp u_n} \rangle_w=0\]
+
+                \underline{\textbf{Außerdem:}} $p_{n+1}=\gamma_n x^{n+1}+\dots$
+
+                \[\implies u_{n+1}(x)=\frac{p_{n+1}(x)}{\left\Vert p_{n+1} \right\Vert_w}\]
+
+                $\implies \gamma_{n+1}>0$
+
+                \underline{\textbf{z.z.}} $p_{n+1}=a_{n+1}u_{n+1}$:
+
+                \[\frac{\gamma_n}{\left\Vert p_{n+1} \right\Vert_w}=\gamma_{n+1}\implies \left\Vert p_{n+1} \right\Vert_w=\frac{\gamma_n}{\gamma_{n+1}}\]
+
+            \end{proof}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 20 am 10.01.2023\xrfill[0.7ex]{1pt}
+
+            \begin{remark}\label{b56}
+                Die Drei-Term-Rekursion ist nicht notwendig für die Eindeutigkeit:
+
+                Seien $u_n^{(1)},u_n^{(2)}\in\Pi_n$ mit $u_n^{(i)}\perp \Pi_{n-1}=\text{span}\{u_0,\dots,u_{n-1}\}$.
+                \begin{align*}
+                    &\implies\Pi_n=\text{span}\{u_0,\dots,u_n^{(1)}\}\\
+                    &\implies u_n^{(2)}=\sum_{i=1}^{n-1}\langle u_n^{(2)},u_i \rangle u_i + \langle u_n^{(2)},u_n^{(1)}u_n^{(1)}=\alpha u_n^{(1)} \rangle
+                \end{align*}
+                Durch die Normierung des ersten Koeffizienten folgt dann Gleichheit. 
+            \end{remark}
+
+            \begin{example}\label{b57}
+                \begin{enumerate}
+                    \item Die Tschebyscheff-Polynome $T_n(x)=\cos(n\cos^{-1}(x)),x\in[-1,1]$ sind Orthogonalpolynome auf 
+                          auf $I=[-1,1]$ mit $w(x)=\frac{1}{\sqrt{1-x^2}}$.
+                          Insb. ist hier \[b_n=\langle xu_n,u_n \rangle=\int_{-1}^1x\frac{u_n(x)^2}{\sqrt{1+x^2}}=0.\]
+                    \item Die Legendre-Polynome ergeben sich aus $I=[-1,1],w=1$.
+                    \item Die Hermite-Polynome ergeben sich aus $I=\R,w(x)=e^{-x^2}$.
+                \end{enumerate}
+            \end{example}
+
+            \underline{\textbf{Ausgangslage}}: (\ref{g53}) sagt, dass wir die Nullstellen $x_1,\dots,x_m$ des Polynoms $v\in\Pi_m,v\perp\Pi_{m-1}$, bestimmen
+            müssen. Bemerkung \ref{b56} sagt, $v=\alpha u_m$, mit $u_m$ aus Satz (\ref{s55}).
+
+            \underline{\textbf{Frage:}} Hat $v=\alpha u_m$, d.h. $u_m$, überhaupt $m$ verschiedene Nullstellen.
+
+            \begin{theorem}\label{s58}
+                Das Orthogonalpolynom $u_m, m\in\N_0$, aus Satz \ref{s55} hat genau $m$ einfache Nullstellen in $I$.
+            \end{theorem}
+
+            \begin{proof}
+                \underline{\textbf{$m=0$:}} $u_0=\text{const}\neq 0$, klar.
+            
+                \underline{\textbf{$m>0$:}} Seien $\xi_1,\dots,\xi_k\in I$ die Pnkte in $I$ an denen sich das Vorzeichen von $u_m$ 
+                ändert.$\implies u_m(\xi_i)=1,i=1,\dots,k$.
+
+                \underline{\textbf{z.z.:}} $k=m$
+
+                Definiere 
+                \[q(x)=\begin{cases}
+                    1&\text{falls } k=0\\
+                    (x-\xi_1)\cdot\dots\cdot(x-\xi_k), & \text{sonst}
+                \end{cases}\]
+                $\implies q$ wechselt an den gleichen Stellen wie $u_m$ das Vorzeichen in $I$.
+
+                $\implies q(x)u_m(x)w(x)$ wechselt das Vorzeichen nicht in $I$. 
+
+                $\implies 0 \neq \int_i q(x)u_m(x)w(x)dx=\langle q,u_m \rangle_w$
+                
+                $\implies \text{Grad } q\geq m$
+
+                $\stackrel{u_m\in\Pi_m}{\implies} \text{Grad }q =k =m$.
+            \end{proof}
+
+            \underline{\textbf{Also:}} Falls es eine Quadraturformel mit $m\in\N$ Stützstellen und Exaktheitsgrad $q=2m-1$
+            gibt, dann sind die Stützstellen $x_1,\dots,x_m$ die Nullstellen des Orthogonalpolynoms aus Satz \ref{s55}.
+
+            \underline{\textbf{Frage:}} Finden wir die entsprechenden Gewichte?
+
+            \begin{theorem}\label{s59}
+                Eine Quadraturformel (\ref{g51}) zu den Stützstellen $x_1,\dots,x_m,x_i\neq x_j$ habe den Exaktheitsgrad $q=m-1$.
+                Dann sind die Gewichte gegeben durch
+                \begin{equation}
+                    w_i=\int_I L_i(x)w(x)dx,i=1,\dots,m\label{g56}
+                \end{equation}
+                mit den Lagrange-Polynomen $L_i\in\Pi_{m-1}$ zu den Stützstellen $x_1,\dots,x_m$.
+            \end{theorem}
+
+            \begin{proof}
+                $Q$ hat Exaktheitsgrad $q=m-1$. $\implies L_i\in\Pi_{m-1}$ wird exakt integriert
+
+                \begin{align*}
+                    \implies \int_I L_i(x)w(x)dx&=Q[L_i]\\
+                    &=\sum_{j=1}^m w_j\underbrace{L_i(x_j)}_{=\delta_{ij}}=w_i
+                \end{align*}
+            \end{proof}
+
+        \section{Gauß-Quadratur}
+
+            \begin{definition}\label{d510}
+                Sei $I\subset\R$ ein Intervall und $w$ eine Gewichtsfunktion $w:I\to\R,w>0$. Die $m$-te \textbf{Gaus-Quadraturformel}
+                $Q_w^m[f]$ ist definiert durch 
+                \begin{equation*}
+                    Q_w^m[f]=\sum_{i=1}^m w_if(x_i)\approx \int_I f(x)w(x)dx,
+                \end{equation*}
+                mit $x_1,\dots,x_m$ den Nullstellen des $m$-ten Orthogonalpolynoms $u_m$ aus Satz \ref{s55} und Gewichten 
+                $w_i$ wie in (\ref{g56}).
+            \end{definition}
+
+            \begin{corollary}\label{k511}
+                Die $m$-te Gauss-Quadraturformel $Q_w^m[f]$ hat tatsächlich Exaktheitsgrad $q=2m-1$.
+            \end{corollary}
+
+            \begin{proof}
+                Sei $p\in \Pi_{2m-1}$, setze 
+                \[\tilde{p}(x)=\sum_{i=1}^m p(x_i)L_i(x)\in\Pi_{m-1}\]
+
+                \underline{\textbf{Fall 1:}} $p\in \Pi_{m-1}\implies p=\tilde{p}$.
+
+                \begin{equation*}
+                    \int_Ip(x)w(x)dx=\int_I\tilde{p}(x)w(x)dx = \sum_{i=1}^m p(x_i)\underbrace{\int_I L_i(x)w(x)dx}_{=w_i}=Q_w^m[p]
+                \end{equation*}
+
+                \underline{\textbf{Fall 2:}} $p\in \Pi_{2m-1}\setminus\Pi_{m-1}$:
+
+                Definiere 
+                \begin{align*}
+                    &q(x)=p(x)-\tilde{p}(x)\\
+                    &\implies q(x_i)=p(x_i)-\tilde{p}(x_i)=0, i=1,\dots,m\\
+                    &\implies q(x)=v(x)r(x) \text{ mit } v(x)=(x_1)\cdot\dots\cdot(x-x_m) \text{ und }\\
+                    &r\in\Pi_{m-1}\\
+                    &\implies \int_I q(x)w(x)dx =\int_I v(x)r(x)w(x)dx=\langle v,r \rangle_w=\alpha \langle u_m,r \rangle_w=0
+                \end{align*}
+
+                \begin{align*}
+                    \int_I p(x)w(x)dx=\underbrace{\int_I q(x)w(x)dx}_{=0} + \underbrace{\int_I \tilde{p}(x)w(x)dx}_{=Q_w^m[p]}=Q_w^m[p]
+                \end{align*}
+            \end{proof}
+
+            \begin{example}\label{b511}
+                Die Gaus-Quadraturformel auf $I=[-1,1]$ mit $w=1$ heißt auch \underline{\textbf{Gauss-Legendre-Quadratur}}. Wir haben 
+                \begin{tabular}{|c|c|c|}
+                    m & $x_i$ & $w_i$\\
+                    1 & 0 & 2\\
+                    2 & $-\frac{1}{\sqrt{3}},\frac{1}{\sqrt{3}}$ & 1,1\\
+                    3 & $-\frac{\sqrt{15}}{5}$,0,$\frac{\sqrt{15}}{5}$ &$\frac{5}{9}$,$\frac{8}{9}$,$\frac{5}{9}$
+                \end{tabular} 
+            \end{example}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 21 am 12.01.2023\xrfill[0.7ex]{1pt}
+            
+            \begin{theorem}\label{s512}
+                Sei $f\in\C^{2m}(I)$. Dann gilt 
+                \[\left\vert \int_I f(x)w(x)dx-Q_w^m(f) \right\vert\leq \frac{\left\Vert f^{(2m)} \right\Vert_{C(I)}}{(2m)!\gamma_m^2}\]
+                mit $\gamma_m>0$ aus Satz \ref{s55}.
+            \end{theorem}
+
+            \begin{proof}
+                \underline{\textbf{1.:}} Finde ``geeignete'' Interpolation: 
+
+                Sei $p\in\Pi_{2m-1}$ , mit 
+                \begin{equation}\label{g57}
+                    p(x_i)=f(x_i),p'(x_i)=f'(x_i), i=1,\dots,m
+                \end{equation}
+                Das heißt auch Hermit-Interpolation.
+
+                \underline{\textbf{Z.z.:}} $p$ existiert und ist eindeutig.
+
+                \begin{align*}
+                    &\mu:\Pi_{2m-1}\to \R^{2m}\\
+                    &p\mapsto (p(x_1),\dots,p(x_n),p'(x_1),\dots,p'(x_n))
+                \end{align*}
+
+                \begin{itemize}
+                    \item $\mu$ ist linear
+                    \item $\mu(p)=0 \implies x_1,\dots,x_n$ sind doppelte Nullstellen
+                        $\implies p$ hat $2m$ Nullstellen, d.h. es ist konstant $0$. D.h. $\mu$ is injektiv.
+                    \item $\implies \mu$ ist bijektiv (Rang-Defekt Formel). D.h. $p$ existiert und ist eindeutig. 
+                \end{itemize}
+
+                \underline{\textbf{2.: Zeige}}  $f(x)-p(x)=\frac{f^{(2m)}(\xi)}{(2m)!}\underbrace{\prod_{i=1}^{m} (x-x_i)^2}_{=s(x)\in\Pi_{2m}}$.
+
+                \underline{\textbf{Definiere:}}
+                \[h(t)=f(t)-p(t)-\frac{s(t)}{s(x)}(f(x)-p(x))\]
+                \begin{align*}
+                    &\implies h \text{ hat doppelte Nullstellen } x_1,\dots, x_n \text{ und eine zusätzliche Nst } t=x\\
+                    &\implies h \text{ hat } 2m+1 \text{ Nullstellen}\\
+                    &\implies h' \text{ hat } 2m \text{ Nullstellen}\\
+                    &\implies h'' \text{ hat } 2m -1\text{ Nullstellen}\\
+                    & \vdots \\
+                    & \implies h^{(2m)} \text{ hat } 1 \text{ Nullstelle } \xi \in I\\
+                    &\implies  0=h^{(2m)}(\xi)=f^{(2m)}(\xi)-\underbrace{p^{(2m)}(\xi)}_{=0}-\frac{(2m)!}{s(x)}(f(x)-p(x))
+                \end{align*}
+
+                \begin{equation}\label{g58}
+                    \implies f(x)-p(x)=\frac{f^(2m)(\xi)}{(2m)!}s(x)
+                \end{equation}
+
+                \underline{\textbf{3.: Fehlerabschätzung}}
+
+                \begin{equation*}
+                    \left\vert \int_I f(x)w(x)dx-\underbrace{Q_w^m(f)}_{\stackrel{(\ref{g57})}{=}Q_w^m(p)=\int_I p(x)w(x)dx} \right\vert = (\star)
+                \end{equation*}
+
+                \begin{align*}
+                    (*) &= \left\vert \int_I (f(x)-p(x))w(x)dx \right\vert \\
+                    &\leq \frac{\left\Vert f^{(2m)} \right\Vert}{(2m)!} \int_I \underbrace{s(x)w(x)}_{\geq 0}dx
+                \end{align*}
+
+                $s$ hat genau $2m$ Nst und $u_m^2$ hat genau $2m$ Nst, beide haben Grad $2m\implies s=\frac{1}{\gamma_n^2}u_m^2$:
+
+                \begin{align*}
+                    &\int_I s(x)w(x)dx\\
+                    &=\int_I\frac{u_m(x)^2}{\gamma_m^2} w(x)dx\\
+                    &=\frac{1}{\gamma_m}^2 \underbrace{\langle u_m,u_m \rangle_w}_{=\left\Vert u_m \right\Vert_w^2=1}=\frac{1}{\gamma_n^2}
+                \end{align*}
+
+            \end{proof}
+
+            \begin{remark}\label{b512}
+                Für die Gaus-Legendre-Formel (d.h. $I=[-1,1],w=1$) ist $\gamma_m^2 \approx \frac{1}{\pi}4^m$
+            \end{remark}
+
+            \begin{tcolorbox}[enhanced,breakable,
+            title=Unabhängig von der Länge von $I$?]
+            In der obigen Abschätzung kommt die Länge des Intervalles nicht direkt vor, was einem zunächst komisch vorkommen sollte. 
+            Allerdings ist die Abschätzung versteckt doch abhängig von der Länge $L$, da die Leitkoeffizieten $\gamma_n$ kleiner werden müssen, wenn $L$ größer wird damit die Polynome normiert bleiben!
+            \end{tcolorbox}
+            
+        \section{Numerische Berechnung von Gauß-Quadraturformeln}
+
+            \underline{\textbf{Frage:}} Wie bestimmen wir Stützstellen $x_i$ und Gewichte $w_i$ von Gauß-Quadraturformeln numerisch?
+
+            $x_i\to$ Nullstellen der Orthgonal-Polynome
+
+            $w_i=\int_I L_i(x)w(x)dx$
+
+            \underline{\textbf{Erinnerung:}} $u_i(x)=\gamma_ix^i+\dots+$ erfüllen gemäß Satz \ref{s55}:
+            \begin{align*}
+                &=u_{-1}=0\\
+                &u_0=\frac{1}{\left\Vert 1 \right\Vert_w}\\
+                a_{i+1}u_{i+1}=(x-b_i)u_i(x)-a_iu_{i-1}(x),i\geq 0
+            \end{align*}
+
+            \begin{theorem}\label{s514} % hier war mal 5.12
+                Die Nulltellen von $u_i$ stimmen mit den Eigenwerten von 
+                \begin{equation*}
+                    J_i=\begin{bmatrix}
+                        b_1 a_1 & &&\\
+                        a_1 & \ddots & \ddots & &\\
+                        &\ddots & \ddots & \ddots & \\
+                        &&&a_{i-1} & b
+                    \end{bmatrix}
+                \end{equation*}
+
+                überein. Ist $\lambda$ ein Eigenwert von $J_i$ und $v=\begin{bmatrix}
+                    v_1\\
+                    \vdots\\
+                    v_n
+                \end{bmatrix}$ ein zugehöriger Eigenvektor mit $\left\Vert v \right\Vert_2=1$ und $v_1\geq 0$.
+
+                Dann gilt: 
+
+                \begin{equation*}
+                    v_k=\gamma u_{k-1}(\lambda), k=1\dots,i
+                \end{equation*}
+
+                mit 
+                \begin{equation*}
+                    \gamma=\left(\sum_{k=0}^{i-1}u_k(\lambda)^2\right)^{-\frac{1}{2}}.
+                \end{equation*}
+            \end{theorem}
+
+            \begin{proof}
+                Satz \ref{s58} sagt, dass die $u_i$ $i$ verschiedene, einfache Nullstellen hat. 
+                
+                Sei $\lambda$ eine dieser Nullstellen und $v_kP\gamma u_{k-1}(\lambda)$ mit $\gamma\in\R\setminus\{0\}$ beliebig.
+            
+                Überlegung:
+                 
+                \begin{align*}
+                    (J_jv)_{k} &= b_k v_k+ a_{k-1} v_{k-1}+a_{k} v_{k+1}\stackrel{!}{=}\\
+                    &=\gamma(\underbrace{b_k u_{k-1}({\lambda}) + a_{k-1}u_{k-2}(\lambda)+a_ku_k(\lambda)}_{\stackrel{(\ref{g54})}{=}\lambda u_{k-1}(\lambda)}) \\
+                    &= \lambda v_k, k=2,\dots, i-1
+                \end{align*}
+
+                $k=1$: $v_0=\gamma u_{-1}(\lambda)=0$
+
+                $k=i$: $v_{i+1}=\gamma u_i(\lambda)=0$ (da, Nst).
+
+                $\implies (\lambda, v)$ ist EP von $J_i$.
+
+                \underline{\textbf{Z.z}} $\gamma=\left(\sum_{k=0}^{i-1}u_k(\lambda)^2\right)^{-\frac{1}{2}}, v_1\geq 0$.
+
+                $1\stackrel{!}{=}\left\Vert v \right\Vert_2^2 = \sum_{k=1}^{i}(\gamma u_{k-1}(\lambda))^2 = \gamma^2 \sum_{k=1}^i u_{k-1}(\lambda)^2$
+
+                $\implies \gamma=\left(\sum_{k=1}^{i-1}u_k(\lambda)^2\right)^{-\frac{1}{2}}$
+
+                $v_1=\gamma u_0(\lambda)>0$
+
+            \end{proof}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 22 am 17.01.2023\xrfill[0.7ex]{1pt}
+            
+            \begin{theorem}\label{s513}
+                Die Gewichte der Gauß-Quadratur $Q_w^m[f]$ sind positiv, mit 
+                \begin{equation*}
+                    w_j=\left(u_m{k=0}^{m-1}u_k(x_j)^2\right)^{-1}, j=1,\dots, m
+                \end{equation*}
+            \end{theorem}
+            \begin{proof}
+                Sei $L_j\in\Pi_{m-1}$ das $j$-te Lagrange-Polynom zu $x_1,\dots,x_m$.
+                $\implies L_j(x)=\sum_{k=0}^{m-1} \alpha_k u_k(x)$
+            
+                \begin{align*}
+                    \alpha_k&=\langle L_j,u_k \rangle_w
+                &=\int_I \underbrace{\underbrace{L_j(x)}_{\in \Pi_{m-1}}\underbrace{u_k(x)}_{\in \Pi_{m-1}}}_{\in \Pi_{2m-2}}w(x)\\
+                &=Q_w^m[f]=\sum_{l=0}^m w_l L_j(x_l) u_k(x_k)=w_j u_k(x_j)
+                \end{align*}
+
+                Außerdem: 
+                \begin{align*}
+                    &\left\Vert L_j \right\Vert_w^2 = \sum_{k=0}^{m-1} a_k^2 = \sum_{k=0}^{m-1} w_j^2u_k(x_j)^2=\sum_{k=1}^{m-1}u_k(x_j)^2\\
+                    &=\int_I{L_j}(x)^2w(x)dx=\sum_{k=1}^mw_kL_j(x_k)^2 = w_j
+                \end{align*}
+
+            \end{proof}
+
+            \begin{corollary}\label{k514}
+                Gegeben eine Gewichtsfunktion und die Koeffizienten der zugehörigen 3-Term-Rekursion der Orthogonalpolynome. Seien $(\lambda_i,v_i)$ die EP von der Matrix 
+                ()\ref{g5.9)}. Seien die $v_i$ so, dass $\left\Vert v_i \right\Vert_2=1(v_i)_1\geq 0$. Dann sind:
+                \begin{align*}
+                    &x_i=\lambda_i\\
+                    &w_i=(v_i)^2_1 \left\Vert 1 \right\Vert_w^2
+                \end{align*}
+                Die Stützstellen und Gewichte von $Q_w^i[f]$.
+            \end{corollary}
+
+            \begin{proof}
+                \underline{\textbf{}Stützstellen $x_i$:} Satz \ref{s512}
+
+                \underline{\textbf{Gewiche $w_i$}} Satz \ref{s512} sagt $(v_i)_1=\gamma u_0(x_i)=\left(\sum_{k=0}^{m-1}u_k(x_j)^2\right)^{-1/2}\frac{1}{\left\Vert 1 \right\Vert_w}$.
+
+            \end{proof}
+
+            \begin{remark}\label{b515}
+                $J_i$ ist symmetrisch mit einfachen EW. Das Lösen des EW-Problems ist somit gukonditioniert und kann mit dem 
+                $QR$-Algorithmus erfolgen.
+            \end{remark}
+
+            \begin{remark}\label{516}
+                Das Berechnen von $a_i$ und $b_i$ (und $\left\Vert 1 \right\Vert_w$) ist je nach Gewichtsfunktion nichttrivial. Für die Gauss-Legendre-Quadratur ($I=[-1,1],w=1$) gilt: $(*)$
+                \begin{align*}
+                    &a_n=\frac{n}{\sqrt{kn^2-1}}\\ % ist das wirklich ein k?
+                    &b_n=0
+                \end{align*}
+            \end{remark}
+
+        \section{Tensorprodukt-Quadratur}
+
+            \underline{\textbf{Problem:}} Wie berechnen wir Integrale mit Integrationsbereich $D\subset \R^d,d>1$?
+
+            \underline{\textbf{Vereinfachung:}} 
+            \begin{enumerate}
+                \item $D=[a_1,b_1]\times \dots \times [a_d,b_d]\subset \R^d$ hat Tensorprodukt-Struktur.
+                \item $D=[0,1]^2=\square$
+            \end{enumerate}
+
+            \underline{\textbf{Neue Aufgabe:}}
+
+            Gegeben $f\in C(\square)$, berechne 
+            \begin{equation*}
+                (I\odot I )[f]\coloneqq \int_\square f(x)dx=\int_0^1\int_0^1 f(y,z)dydz
+            \end{equation*}
+
+            \underline{\textbf{Idee:}} Benutze für jedes Integral eine eigene Quadraturformel (z.B. Gauß, summierte Trapeze, etc.)
+            
+            für $y:$ $Q_y[g]=\sum_{i=1}^m \xi g(y_i)$
+
+            für $z:$ $Q_z[g]=\sum_{i=1}^n \zeta g(z_i)$
+
+            \begin{equation*}
+                (Q_y\otimes Q_z)[f]\coloneqq \sum_{i=1}^m\sum_{j=1}^m \underbrace{\xi_i \zeta_j}_{w_{ij}} f(y_i,z_j)
+            \end{equation*}
+
+
+            \begin{theorem}\label{s517}
+                Für Quadraturformel $Q_y,Q_z$ mit Exaktheitsgrad mindestens $1$ und positiven Gewichten gilt:
+                \begin{equation*}
+                    \left\vert (I\otimes I)[f]-(Q_y\otimes Q_x)[f]\leq\sup_{y\in [0,1]} E_z[f(y_i,\cdot)]+\sup_{z\in[0,1]} E_y[f(\cdot,z)] \right\vert
+                \end{equation*}
+                mit 
+                \begin{align*}
+                    &E_y(g)=\left\vert I[g]-Q_y[g] \right\vert\\
+                    &E_z(g)=\left\vert I[g]-Q_z[g] \right\vert
+                \end{align*}
+            \end{theorem}
+
+            \begin{proof}
+                \begin{align*}
+                   & (I\otimes I)[f]-(Q_y\otimes Q_x)[f] \\
+                   &=\int_0^1\int_0^1 f(y,z)dzdy -\sum_{i=1}^m\sum_{j=1}^n \xi_i\zeta_j f(y_i,z_i)\\
+                   &=\underbrace{\int_0^1\int_0^1 f(y,z) dz-\sum_{j=1}^n \zeta_j f(y,z)dy}_{(I)}+\underbrace{\sum_{j=1}^n\left(\int_0^1 f(y,z_i)dy-\sum_{i=1}^m \xi_i f(y_i,z_i)\right)}_{(II)}
+                \end{align*}
+
+                \begin{align*}
+                    &\left\vert (I) \right\vert \leq \int_0^1 \left\vert \int_0^1 f(y,z) dz-\sum_{j=1}^n\xi_j f(y,z_i) \right\vert dy\leq 1\cdot \sup_{y\in[0,1]} E_z(f(y,\cdot))\\
+                    &\left\vert (II) \right\vert\leq \sum_{j=1}^n\zeta_i \left\vert \int_0^1 f(y,z_i dy-\sum_{i=1}^m\zeta_i f(y,z_i)) \right\vert \leq \sup_{z\in[0,1] E_y[f(\cdot,z)]}
+                \end{align*}
+            \end{proof}
+
+            \begin{example}\label{b518}
+                Berachte $Q_y=Q_z=T_n$,  $T_n$ summierte Trapezregel.
+
+                $\implies E_y(g)=E_z(g)\leq \frac{h^2}{12}\left\Vert g'' \right\Vert_{C([0,1])}$, $h=1/n$.
+
+                Für $f\in\C^2(\square)$ gitl:
+
+                \begin{equation*}
+                    \left\vert (I\otimes I)[f]-(T_N\otimes T_N)[f] \right\vert\leq \sup_{y\in[0,1] \frac{h^2}{12}}\left\Vert \frac{\partial^2 f(y,\cdot)}{\partial z^2} \right\Vert_{C^([0,1])}+\sup_{z\in[0,1] \frac{h^2}{12}}\left\Vert \frac{\partial^2 f(\cdot,z)}{\partial y^2} \right\Vert_{C^([0,1])} = (*)
+                \end{equation*}
+
+                \begin{equation*}
+                    (*) \leq \frac{h^2}{12}\left(\left\Vert \frac{\partial^2 f(y,\cdot)}{\partial z^2} \right\Vert_{C^([0,1])}+\left\Vert \frac{\partial^2 f(\cdot,z)}{\partial y^2} \right\Vert_{C^([0,1])} \right)
+                \end{equation*}
+                
+            \underline{\textbf{Beobachte:}} $T_N\otimes T_N$ hat somit die gleiche Ordnung wie $T_N$ (d.h. Ordnung 2).
+
+            \underline{\textbf{Aber:}} $T_N$ benötigt $N+1$ Funktionsauswertungen, aber $T_N\otimes T_N$ benötigt $(N+1)^2$.
+            \end{example}
+
+            \begin{remark}\label{b519}
+                Diese Tensorprodukt-Konstruktion kann man auf beliebige endlich Dimensionen mit ähnlichen Aussagen erweitert werden.
+                Z.B. hat die Tensorprodukt summierte Trapezregel in $d$ Dimensionen immer noch Ordnung $2$, aber benötigt $(N+1)^d$ Auswertungen. 
+                Dies bezeichnen wir als den \underline{\textbf{Fluch der Dimension}}. 
+            \end{remark}
+
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 23 am 19.01.2023\xrfill[0.7ex]{1pt}
+            
+        \section{Monte-Carlo-Quadratur, revisited}
+
+            \underline{\textbf{Ziel:}} Wir wollen den Fluch der Dimension ``umgehen''.
+
+            \underline{\textbf{Annahme:}} Analog zur Gauß-Quadratur:
+
+            Sei $D\subset\R^d$ und $w:D\to\R$ eine Gewichtsfunktion, d.h. $w>0$. Sei 
+
+            $$z=\int_D w(x)dx.$$
+            
+            \underline{\textbf{Beobachtung:}} Für $f:D\to\R$ ist 
+            \begin{equation}\label{g59}
+                \int_D f(x)w(x)dx=z\underbrace{\int_D f(x)\frac{w(x)}{z}dx}_{=\mathbb{E}[f(X)]}
+            \end{equation}
+            falls $X$ eine ``stetige'' Zufallsvariable mit Dichtefunktion $\frac{w(x)}{z}$.
+            
+            \begin{definition}\label{d520}
+                Sei $(\Omega,\mathcal{A},P)$ ein Wahrscheinlichkeitsraum und $X:\Omega\to D\subset\R^d$ eine Zufallsvariable. $X$ heißt \underline{\textbf{stetig}},
+                falls eine integrierbare Funktion $g:\mathbb{R}^d\to[0,\infty)$ mit 
+                \begin{equation*}
+                    \int_{\R^d}g(x)dx=1
+                \end{equation*}
+                existiert sodass
+                \begin{equation*}
+                    P(\{X\in A\})=\int_A g(x)dx, A\subset R^d
+                \end{equation*}
+                $g$ heißt Dichtefunktion. 
+            \end{definition}
+
+            \underline{\textbf{Idee:}} Analog zu Alma 2, approximiere $\mathbb{E}[P(x)]$ mittels Monte-Carlo-Verfahren.
+
+            \begin{definition}\label{d5.21}
+                Seien $X,X_i:\Omega\to D_i$ i.i.d. stetige Zufallsvariablen mit Dichtefunktion $g$ auf einem Wahrscheinlichkeitsraum $(\Omega,\mathcal{A},P)$.
+                Sei $f:D\to\R$ stetig. Dann wird 
+                \begin{equation*}
+                    E_n[f]=\frac{1}{n}\sum_{i=1}^n f(X_i)
+                \end{equation*}
+                der Monte-Carlo-Schätzer von $\mathbb{E}[f(X)]$ genannt. 
+
+                \underline{\textbf{O.B.d.A:}} Sei $Z=1\implies \int_D f(x)w(x)dx=\mathbb{E}[f(X)]$.
+                
+            \end{definition}
+
+            \underline{\textbf{Frage:}} Ist $E_n[f]$ eine sinnvolle Quadraturformel?
+
+            \underline{\textbf{Achtung:}} $E_n[f]$ ist eine Zufallsgröße.
+
+            \underline{\textbf{Checks:}} 
+
+            \begin{align*}
+                \mathbb{E}[E_n[f]]=\mathbb{E}[\frac{1}{n}\sum_{i=1}^n f(X_i)]=\frac{1}{n}\sum_{i=1}^n\mathbb{E}[f(X_i)]=\E[f(X)]
+            \end{align*}
+
+            Varianz:
+
+            \begin{align}\label{g510}
+                \V[E_n[f]]=\V[\frac{1}{n}\sum_{i=1}^nf(X_i)]=\frac{1}{n^2}\sum_{i=1}^n \V[f(X_i)]=\frac{\V[f(X)]}{n}
+            \end{align}
+
+            
+            \begin{theorem}\label{s522}
+                Sei $f:D\to\R$ stetig mit 
+                \[\vert \int_D f(x)w(x)dx\vert < \infty\]
+                \[\int_D f^2(x)w(x)dx < \infty.\]
+                Dann gilt: 
+                \[\E\left[\left\vert \int_D f(x)w(x)dx-E_n[f] \right\vert\right]\leq \sqrt{\frac{\V[f(X)]}{n}}\]
+            \end{theorem}
+
+            \begin{proof}
+
+                \begin{align*}
+                    &\E\left[\left\vert \int_D f(x)w(x)dx-E_n[f] \right\vert\right]^2\\
+                    &=\left(\int_D \left\vert \int_D f(x)w(x)dx-E_n[f] \right\vert w(x) dx\right)^2\\
+                    &=\left(\left(\int_D \left\vert \int_D f(x)w(x)dx-E_n[f] \right\vert \sqrt{w(x)} dx\right)\sqrt{w(x)}\right)^2 = (*)\\
+                    &\stackrel{C.S.}{\leq} \int_D\left\vert \int_D f(x)w(x)dx-E_n[f] \right\vert^2w(x)dx \cdot \underbrace{\int_D w(x)dx}_{=1}\\
+                    &=\int_D \left\vert \underbrace{\int_D f(x) w(x)dx}_{=\E[f(X)]=\E[E_n[f]]}-E_n[f] \right\vert^2 w(x)dx\\
+                    &=\V[E_n[f]]\stackrel{(\ref{g510})}{=} \frac{\V[f(X)]}{n}
+                \end{align*}
+
+                $\implies$ Abschätzung.
+
+                \underline{\textbf{z.z.:}} $\V[f(X)]<\infty$
+
+                \begin{align*}
+                    0\leq \V[f(X)] = \E[f(X)^2]\underbrace{-\E[f(X)]^2}_{\leq 0} <\infty
+                \end{align*}
+
+                nach Vorraussetzung.
+
+            \end{proof}
+
+            \begin{remark}\label{b523}
+                \begin{enumerate}
+                    \item Satz \ref{s522} ist eine Aussage über den zu erwartenden Fehler. Eine spezifische Realisierung kann beliebig falsch sein.
+                    \item Das generieren der nötien (Pseudo-)Zufallszahlen ist nicht trivial.
+                    \item Die Konvergenzrate des Monte-Carlo-Schätzers ist $O(N^{\frac{-1}{2}})$, wobei $N$ die Anzahl der Funktionsauswertungstellen ist. 
+                          Die Konvergenzrate ist \underline{\textbf{dimensionsunabhängig}}!
+                \end{enumerate}
+            \end{remark}
+
+            \underline{\textbf{Zum Vergleich:}} Die tensorierte, summierte Trapezregel 
+            \[T_n\otimes\dots,\otimes T_n\] 
+            auf $[0,1]^d$ hat Konvergenzrate $O(h^2)$ bei $N=(n+1)^d$ Funktionsauswertungen. Es gilt $h=\frac{1}{n}$
+
+            $\implies O(h^2)=O(n^{-2})=O(N^{-2/d})$
+
+            Die Konvergenzrate wird für große $d$ also schlechter.
+
+            \begin{tcolorbox}[enhanced,breakable,
+            title=Top 500]
+            Es gibt eine Liste der Top 500 Rechner, also die Top 500, welche z.B. auf \hyperref{top500.org}{top500.org} erreichbar ist
+            \end{tcolorbox}
+
+        \section{Dünngitterquadratur}
+
+            \underline{\textbf{Frage:}} Falls wir den Fluch der Dimension nicht besiegen können, können wir ihn dann wenigstens eträglich machen?
+            
+            \begin{definition}\label{d524}
+                Sei 
+                \[\varphi(x)=\begin{cases}1-\vert x\vert & x\in[-1,1]\\ 0 & \text{sonst}\end{cases}.\]
+                    $\Delta_j=\{0,1,\dots,2^j\}$, und 
+                \[\varphi_{j,k}=\varphi(2^j x-k)\vert_{[0,1]},k\in\Delta_j,j\in \N_0\]
+
+                $\varphi_{j,k},k\in\Delta_j$ heißt \underline{\textbf{modale Basis}} im Raum der linearen Splines / stückweise stetien Funktionen. 
+
+                \[V_j=\{f\in C([0,1]):f\vert_{2^j,2^j(k+1)}\in \Pi_1,k=0,\dots,2^j-1\}\]
+
+            \end{definition}
+
+            \underline{\textbf{Erinnerung:}} Wir können $f\in \C([0,1])$ mittels stückweiser linearer Interpolation durch Funktionen in $V_j$
+            approximieren.
+
+            \[f(x)\approx f_j(x)=\sum_{k\in\Delta_j} f(2^{-j}k)\varphi_{j,k}(x) \]
+
+            \[\implies \int_0^1 f(x)dx\approx \int_0^1 f_j(x)dx=\sum_{k\in\Delta_j}f(2^{-j}k)\underbrace{\int_0^1 \varphi_{j,k}(x)dx}_{=\begin{cases}2^{-(j+1)} & k\in \{0,2^j\}\\ 2^{-j} & \text{sonst}\}\end{cases}}\]
+            \[=2^{-(j+1)}(f(0)+f(1)+\sum_{k=1}^{2{j-1}})f(2^{-j}k)=T_{2^j}[f]\]
+
+            Wie haben also die summierte Trapezregel auf komplizierte Art und Weise hergeleitet.
+            \noindent
+            \xrfill[0.7ex]{1pt}Ende von Vorlesung 24 am 24.01.2023\xrfill[0.7ex]{1pt}
             
 
 \end{document}

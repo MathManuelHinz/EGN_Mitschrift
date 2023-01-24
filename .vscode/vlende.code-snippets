@@ -10,7 +10,7 @@
 	 	"prefix": "vlende",
 	 	"body": [
 			"\\noindent",
-	 		"\\xrfill[0.7ex]{1pt}Ende von Vorlesung $1 am $2.$3.2022\\xrfill[0.7ex]{1pt}",
+	 		"\\xrfill[0.7ex]{1pt}Ende von Vorlesung $1 am $2.$3.2023\\xrfill[0.7ex]{1pt}",
 			"$0"
 		],
 	},
